@@ -7,7 +7,7 @@ PhpRBACBundle is symfony 6 bundle with fulle access control library for PHP. It 
 Go to https://phprbac.net/ :) to have the representation of permissions and roles as well as their interactions.
 
 <center>
-<figure>
+<figure style="background-color: white">
 <img src="https://phprbac.net/img/rbac.png"
      alt="Roles and Permissions"
      height="75%" width="75%"
@@ -26,7 +26,6 @@ just include the package with composer:
 register the bundle inside config/bundles.php
 
 <pre>
-<?php
 
 return [
     ...
