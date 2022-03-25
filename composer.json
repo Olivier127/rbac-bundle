@@ -1,5 +1,5 @@
 {
-    "name": "olivier127/rabc-bundle",
+    "name": "olivier127/rbac-bundle",
     "type": "symfony-bundle",
     "description": "Symfony PhpRabcBundle allow to use RBAC control access for synfony project",
     "keywords": [
