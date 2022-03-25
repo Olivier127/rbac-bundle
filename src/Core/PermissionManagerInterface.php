@@ -1,12 +1,12 @@
 <?php
 
-namespace PhpRbac\Core;
+namespace PhpRbacBundle\Core;
 
-use PhpRbac\Entity\RoleInterface;
-use PhpRbac\Entity\PermissionInterface;
-use PhpRbac\Exception\RbacPermissionNotFoundException;
+use PhpRbacBundle\Entity\RoleInterface;
+use PhpRbacBundle\Entity\PermissionInterface;
+use PhpRbacBundle\Exception\RbacPermissionNotFoundException;
 
-interface PermissionManagerInterface extends NodeManagementInterface
+interface PermissionManagerInterface extends NodeManagerInterface
 {
     /**
      * Remove permission and attach all the sub-permission to the parent
@@ -27,26 +27,6 @@ interface PermissionManagerInterface extends NodeManagementInterface
      * @return boolean
      */
     public function removeRecursively(PermissionInterface $permission): bool;
-
-    /**
-     * Unassignes all roles of this permission, and returns their number
-     *
-     * @param PermissionInterface $permission
-     *
-     * @throws RbacPermissionNotFoundException
-     * @return bool
-     */
-    public function unassignRoles(PermissionInterface $permission): bool;
-
-    /**
-     * Returns all roles assigned to a permission
-     *
-     * @param PermissionInterface $permission
-     *
-     * @throws RbacPermissionNotFoundException
-     * @return RoleInterface[]
-     */
-    public function roles(PermissionInterface $permission): array;
 
     /**
      * check if a user has the permission or not

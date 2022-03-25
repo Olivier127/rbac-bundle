@@ -1,0 +1,30 @@
+{
+    "name": "olivier127/rabc-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony PhpRabcBundle allow to use RBAC control access for synfony project",
+    "keywords": [
+        "RBAC", "Security", "Access-Control", "Role", "phprbac.net", "owasp"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Olivier Fouache",
+            "email": "olivier.fouache@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "symfony/framework-bundle": "^6.0",
+        "webmozart/assert": "^1.10",
+        "doctrine/annotations": "^1.0",
+        "doctrine/doctrine-bundle": "^2.5",
+        "doctrine/doctrine-migrations-bundle": "^3.2",
+        "doctrine/orm": "^2.11"
+    },
+    "autoload": {
+        "psr-4": { "PhpRbacBundle\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "PhpRbacBundle\\Tests\\": "tests/" }
+    }
+}

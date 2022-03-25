@@ -1,8 +1,8 @@
 <?php
 
-namespace PhpRbac\Core;
+namespace PhpRbacBundle\Core;
 
-use PhpRbac\Entity\RoleInterface;
+use PhpRbacBundle\Entity\RoleInterface;
 
 interface UserManagerInterface
 {

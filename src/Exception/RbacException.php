@@ -1,10 +1,9 @@
 <?php
 
-namespace PhpRbac\Exception;
+namespace PhpRbacBundle\Exception;
 
 use Exception;
 
 class RbacException extends Exception
 {
-    
 }

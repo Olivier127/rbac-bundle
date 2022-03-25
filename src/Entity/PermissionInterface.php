@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpRbac\Entity;
+namespace PhpRbacBundle\Entity;
 
 interface PermissionInterface extends NodeInterface
 {

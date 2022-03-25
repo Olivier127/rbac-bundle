@@ -1,9 +1,9 @@
 <?php
 
-namespace PhpRbac;
+namespace PhpRbacBundle\Core;
 
-use PhpRbac\Entity\PermissionInterface;
-use PhpRbac\Entity\RoleInterface;
+use PhpRbacBundle\Entity\PermissionInterface;
+use PhpRbacBundle\Entity\RoleInterface;
 
 interface RbacInterface
 {

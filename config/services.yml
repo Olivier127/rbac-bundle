@@ -1,0 +1,18 @@
+services:
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    PhpRbacBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+
+    PhpRbacBundle\EventSubscriber\AccessControlDriver:
+      public: true
+      autowire: true
+      tags:
+        - { name: kernel.event_listener, event: onKernelController }

@@ -1,20 +1,18 @@
 <?php
 
-namespace PhpRbac;
+namespace PhpRbacBundle\Core;
 
 use Webmozart\Assert\Assert;
-use PhpRbac\Entity\RoleInterface;
-use PhpRbac\Core\RoleManagerInterface;
-use PhpRbac\Core\UserManagerInterface;
-use PhpRbac\Entity\PermissionInterface;
-use PhpRbac\Core\PermissionManagerInterface;
+use PhpRbacBundle\Entity\RoleInterface;
+use PhpRbacBundle\Core\RoleManagerInterface;
+use PhpRbacBundle\Entity\PermissionInterface;
+use PhpRbacBundle\Core\PermissionManagerInterface;
 
 class Rbac implements RbacInterface
 {
     public function __construct(
         private PermissionManagerInterface $permissionManager,
-        private RoleManagerInterface $roleManager,
-        private UserManagerInterface $userManager
+        private RoleManagerInterface $roleManager
     ) {
     }
 
@@ -26,7 +24,7 @@ class Rbac implements RbacInterface
         if (is_object($permission)) {
             $permissionId = $permission->getId();
         } elseif (is_string($permission)) {
-            $permissionId = $this->permissionManager->returnId($permission);
+            $permissionId = $this->permissionManager->getPathId($permission);
         }
 
         return $this->permissionManager->hasPermission($permissionId, $userId);
@@ -40,7 +38,7 @@ class Rbac implements RbacInterface
         if (is_object($role)) {
             $roleId = $role->getId();
         } elseif (is_string($role)) {
-            $roleId = $this->roleManager->returnId($role);
+            $roleId = $this->roleManager->getPathId($role);
         }
 
         return $this->roleManager->hasRole($roleId, $userId);
