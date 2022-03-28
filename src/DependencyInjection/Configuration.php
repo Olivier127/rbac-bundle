@@ -10,13 +10,15 @@ final class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('php_rbac');
-        $rootNode = $treeBuilder->getRootNode();
-
-        $rootNode
+        $treeBuilder->getRootNode()
             ->children()
-                ->scalarNode('default')
-                    ->info('Set default deny or allow if access control attribute is missing with aurhorized user')
-                    ->defaultValue('deny')
+                ->arrayNode('no_authentication_section')
+                    ->children()
+                        ->scalarNode('default')
+                            ->info('Set default deny or allow if access control attribute is missing with aurhorized user')
+                            ->defaultValue('deny')
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;

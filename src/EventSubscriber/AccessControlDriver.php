@@ -5,12 +5,14 @@ namespace PhpRbacBundle\EventSubscriber;
 use ReflectionMethod;
 use Psr\Log\LoggerInterface;
 use PhpRbacBundle\Core\RbacInterface;
-use App\Attribute\AccessControl\HasRole;
-use App\Attribute\AccessControl\IsGranted;
 use Symfony\Component\HttpKernel\KernelEvents;
+use PhpRbacBundle\Attribute\AccessControl\HasRole;
+use PhpRbacBundle\Attribute\AccessControl\IsGranted;
+use PhpRbacBundle\Exception\RbacException;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AccessControlDriver implements EventSubscriberInterface
 {
@@ -20,13 +22,23 @@ class AccessControlDriver implements EventSubscriberInterface
     ) {
     }
 
-    public function onKernelController(ControllerEvent $event)
+    private array $config = [
+        'no_authentication_section' => [
+            'default' => 'deny'
+        ]
+    ];
+
+    public function load(array $config)
     {
+        $this->config = $config;
+    }
+
+    public function onKernelController(ControllerEvent $event)
+    {        
         $controllers = $event->getController();
         if (!is_array($controllers)) {
             return;
         }
-
         $controller = $controllers[0];
         $method = $controllers[1];
 
@@ -35,8 +47,11 @@ class AccessControlDriver implements EventSubscriberInterface
         if (is_array($attributes) && !empty($attributes)) {
             $token = $event->getRequest()->query->get('token');
             if (empty($token)) {
-                $this->accessControlLogger->debug('IsGranted on anonymous action', compact('controller', 'method'));
-                return;
+                if (strtolower($this->config['no_authentication_section']['default']) == 'allow') {
+                    $this->accessControlLogger->debug('IsGranted on anonymous action', compact('controller', 'method'));
+                    return;
+                }
+                throw new RbacException("Anonymous user on protected controller/action", 403);
             }
             $attribute = $attributes[0]->newInstance();
             $allowed = $attribute->getSecurityCheckMethod($this->accessControl, "Identifiant utilisateur");

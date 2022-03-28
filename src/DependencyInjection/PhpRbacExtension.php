@@ -6,6 +6,7 @@ use PhpRbacBundle\Command\SecurityInstallRbacCommand;
 use PhpRbacBundle\Core\PermissionManagerInterface;
 use PhpRbacBundle\Core\RbacInterface;
 use PhpRbacBundle\Core\RoleManagerInterface;
+use PhpRbacBundle\EventSubscriber\AccessControlDriver;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -21,6 +22,9 @@ class PhpRbacExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
+        $loader->load('services.yml');
+        
         $container->registerForAutoconfiguration(PermissionManagerInterface::class)
             ->setPublic(true);
         $container->registerForAutoconfiguration(RoleManagerInterface::class)
@@ -28,8 +32,9 @@ class PhpRbacExtension extends Extension
         $container->registerForAutoconfiguration(RbacInterface::class)
             ->setPublic(true);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
-        $loader->load('services.yml');
+        $definition = $container->getDefinition(AccessControlDriver::class);
+        // dump($definition->getMethodCalls());
+        $definition->addMethodCall('load', [$config]); //("default", $config['no_authentication_section']['default']);            
     }
 
     public function getAlias(): string
