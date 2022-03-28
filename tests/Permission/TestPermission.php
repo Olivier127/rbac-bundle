@@ -2,9 +2,9 @@
 namespace PhpRbacBundle\Tests\Permission;
 
 use Exception;
-use PhpRbacBundle\Core\PermissionManager;
 use PhpRbacBundle\Tests\KernelHelper;
-use PhpRbacBundle\Core\RoleManager;
+use PhpRbacBundle\Core\Manager\RoleManager;
+use PhpRbacBundle\Core\Manager\PermissionManager;
 use PhpRbacBundle\Exception\RbacPermissionNotFoundException;
 
 class TestPermission extends KernelHelper

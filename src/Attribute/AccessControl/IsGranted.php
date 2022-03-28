@@ -5,8 +5,9 @@ namespace PhpRbacBundle\Attribute\AccessControl;
 
 use Attribute;
 use PhpRbacBundle\Core\RbacInterface;
+use PhpRbacBundle\Attribute\RBACAttributeInterface;
 
-#[Attribute(Attribute::TARGET_METHOD)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS)]
 final class IsGranted implements RBACAttributeInterface
 {
     public function __construct(

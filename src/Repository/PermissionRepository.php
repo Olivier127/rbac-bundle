@@ -7,7 +7,7 @@ use PhpRbacBundle\Entity\Permission;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
-use PhpRbacBundle\Core\NodeManagerInterface;
+use PhpRbacBundle\Manager\Core\NodeManagerInterface;
 use PhpRbacBundle\Exception\RbacPermissionNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 

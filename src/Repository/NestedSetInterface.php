@@ -1,9 +1,9 @@
 <?php
 namespace PhpRbacBundle\Repository;
 
-use PhpRbacBundle\Core\NodeManagerInterface;
 use PhpRbacBundle\Entity\NodeInterface;
 use PhpRbacBundle\Exception\RbacException;
+use PhpRbacBundle\Core\NodeManagerInterface;
 
 interface NestedSetInterface
 {

@@ -4,9 +4,9 @@ namespace PhpRbacBundle\Core;
 
 use Webmozart\Assert\Assert;
 use PhpRbacBundle\Entity\RoleInterface;
-use PhpRbacBundle\Core\RoleManagerInterface;
+use PhpRbacBundle\Core\Manager\RoleManagerInterface;
 use PhpRbacBundle\Entity\PermissionInterface;
-use PhpRbacBundle\Core\PermissionManagerInterface;
+use PhpRbacBundle\Core\Manager\PermissionManagerInterface;
 
 class Rbac implements RbacInterface
 {

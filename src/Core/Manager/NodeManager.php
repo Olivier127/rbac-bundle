@@ -1,6 +1,6 @@
 <?php
 
-namespace PhpRbacBundle\Core;
+namespace PhpRbacBundle\Core\Manager;
 
 use Exception;
 use PhpRbacBundle\Entity\NodeInterface;

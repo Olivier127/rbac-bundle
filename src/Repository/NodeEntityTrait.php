@@ -2,9 +2,9 @@
 
 namespace PhpRbacBundle\Repository;
 
-use PhpRbacBundle\Core\NodeManagerInterface;
 use PhpRbacBundle\Entity\Node;
 use PhpRbacBundle\Exception\RbacException;
+use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 
 trait NodeEntityTrait
 {

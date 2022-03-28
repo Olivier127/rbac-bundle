@@ -5,10 +5,10 @@ use Exception;
 use App\Entity\User;
 use PhpRbacBundle\Core\Rbac;
 use App\Repository\UserRepository;
-use PhpRbacBundle\Core\RoleManager;
-use PhpRbacBundle\Core\RbacInterface;
 use PhpRbacBundle\Tests\KernelHelper;
-use PhpRbacBundle\Core\PermissionManager;
+use PhpRbacBundle\Core\Manager\RoleManager;
+use PhpRbacBundle\Core\Manager\RbacInterface;
+use PhpRbacBundle\Core\Manager\PermissionManager;
 
 class TestUser extends KernelHelper
 {

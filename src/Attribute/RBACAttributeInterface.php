@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpRbacBundle\Attribute\AccessControl;
+namespace PhpRbacBundle\Attribute;
 
 use Attribute;
 use PhpRbacBundle\Core\RbacInterface;

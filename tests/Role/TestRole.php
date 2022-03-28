@@ -2,10 +2,9 @@
 namespace PhpRbacBundle\Tests\Role;
 
 use Exception;
-use PhpRbacBundle\Core\RoleManager;
 use PhpRbacBundle\Tests\KernelHelper;
-use PhpRbacBundle\Core\PermissionManager;
-use PhpRbacBundle\Core\RbacInterface;
+use PhpRbacBundle\Core\Manager\RoleManager;
+use PhpRbacBundle\Core\Manager\PermissionManager;
 use PhpRbacBundle\Exception\RbacRoleNotFoundException;
 
 class TestRole extends KernelHelper
