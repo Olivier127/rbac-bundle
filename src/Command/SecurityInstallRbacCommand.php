@@ -40,7 +40,7 @@ class SecurityInstallRbacCommand extends Command
         $io->note('Role permission installation');
         $permission = new Permission;
         $permission->setId(1)
-            ->setTitle('Root')
+            ->setTitle('root')
             ->setDescription("Root")
             ->setLeft(0)
             ->setRight(1);
@@ -48,7 +48,7 @@ class SecurityInstallRbacCommand extends Command
         $io->note('Role root installation');
         $role = new Role;
         $role->setId(1)
-            ->setTitle('Root')
+            ->setTitle('root')
             ->setDescription("Root")
             ->setLeft(0)
             ->setRight(1)

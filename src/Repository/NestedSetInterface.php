@@ -3,7 +3,7 @@ namespace PhpRbacBundle\Repository;
 
 use PhpRbacBundle\Entity\NodeInterface;
 use PhpRbacBundle\Exception\RbacException;
-use PhpRbacBundle\Core\NodeManagerInterface;
+use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 
 interface NestedSetInterface
 {

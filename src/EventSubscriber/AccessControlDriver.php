@@ -13,12 +13,14 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Security;
 
 class AccessControlDriver implements EventSubscriberInterface
 {
     public function __construct(
         private RbacInterface $accessControl,
-        private LoggerInterface $accessControlLogger
+        private LoggerInterface $accessControlLogger,
+        private Security $security
     ) {
     }
 
@@ -45,8 +47,9 @@ class AccessControlDriver implements EventSubscriberInterface
         $reflection = new ReflectionMethod($controller, $method);
         $attributes = $reflection->getAttributes(IsGranted::class) + $reflection->getAttributes(HasRole::class);
         if (is_array($attributes) && !empty($attributes)) {
-            $token = $event->getRequest()->query->get('token');
-            if (empty($token)) {
+            $user = $this->security->getUser();
+            // $token = $event->getRequest()->query->get('token');
+            if (empty($user)) {
                 if (strtolower($this->config['no_authentication_section']['default']) == 'allow') {
                     $this->accessControlLogger->debug('IsGranted on anonymous action', compact('controller', 'method'));
                     return;
@@ -54,7 +57,7 @@ class AccessControlDriver implements EventSubscriberInterface
                 throw new RbacException("Anonymous user on protected controller/action", 403);
             }
             $attribute = $attributes[0]->newInstance();
-            $allowed = $attribute->getSecurityCheckMethod($this->accessControl, "Identifiant utilisateur");
+            $allowed = $attribute->getSecurityCheckMethod($this->accessControl, $user->getId());
             if (!$allowed) {
                 $this->accessControlLogger->critical('Action forbidden for user', compact('controller', 'method'));
                 throw new HttpException($attribute->statusCode, $attribute->message);

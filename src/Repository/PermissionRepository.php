@@ -7,7 +7,7 @@ use PhpRbacBundle\Entity\Permission;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
-use PhpRbacBundle\Manager\Core\NodeManagerInterface;
+use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 use PhpRbacBundle\Exception\RbacPermissionNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
@@ -109,7 +109,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
             ORDER BY
                 parent.left
         ";
-
+error_log("node ".$nodeId);
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setParameter(':nodeId', $nodeId);
         $result = $query->getResult();

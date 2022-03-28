@@ -2,9 +2,9 @@
 
 namespace PhpRbacBundle\Entity;
 
-use PhpRbacBundle\Repository\RoleRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use PhpRbacBundle\Repository\RoleRepository;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
 #[ORM\Index(name:"role_idx", columns: ["title", "left", "right"])]
@@ -63,5 +63,10 @@ class Role extends Node implements RoleInterface
         $this->permissions = $permissions;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getTitle();
     }
 }

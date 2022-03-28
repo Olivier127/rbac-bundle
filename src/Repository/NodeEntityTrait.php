@@ -71,10 +71,10 @@ trait NodeEntityTrait
 
     public function pathId(string $path, string $classException) : mixed
     {
-        $path = "root".strtolower($path);
+        $pathCmpl = "root".strtolower($path);
         $tableName = $this->getClassMetadata()
             ->getTableName();
-        $parts = explode("/", $path);
+        $parts = explode("/", $pathCmpl);
         $sql = "
             SELECT
                 node.id,
@@ -94,7 +94,7 @@ trait NodeEntityTrait
         $query = $pdo->prepare($sql);
         $finalPart = end($parts);
         $query->bindValue(":title", strtolower($finalPart));
-        $query->bindValue(":path", $path);
+        $query->bindValue(":path", $pathCmpl);
         $result = $query->executeQuery();
 
         if ($result->rowCount() == 0) {
