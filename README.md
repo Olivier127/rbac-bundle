@@ -40,6 +40,27 @@ Update the database schema with doctrine migration or doctrine schema update to 
 
 # Configuration
 
+## Prepare Symfony
+
+Specify the different sections requiring prior authentication in the firewall security configuration section.
+
+Access control only applies to authenticated sections of the website. Therefore, we will use basic ROLE_USER for all users. ROLE_ADMIN can be used for the main administrator but his rights will only be allocated by being associated with the role '/' of the roles tree.
+
+example :
+<pre>
+# config/packages/security.yaml
+security:
+    # ...
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        
+    access_control:
+        - { path: ^/backend, roles: ROLE_USER }       
+        - { path: ^/todolist, roles: ROLE_USER }       
+</pre>
+
+## Creation the roles and permissions
 Add all the roles and the permissions you need with the RoleManager and the PermissionManager
 
 examples :
