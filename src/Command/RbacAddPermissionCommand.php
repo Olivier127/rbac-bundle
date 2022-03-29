@@ -3,9 +3,6 @@
 namespace PhpRbacBundle\Command;
 
 use PhpRbacBundle\Core\Manager\PermissionManager;
-use PhpRbacBundle\Entity\permission;
-use PhpRbacBundle\Entity\Permission;
-use PhpRbacBundle\Repository\permissionRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
@@ -18,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 #[AsCommand(
-    name: 'security:add-permission',
+    name: 'security:rbac:permission:add',
     description: 'Add permission to RBAC system',
 )]
 class RbacAddPermissionCommand extends Command
@@ -33,7 +30,7 @@ class RbacAddPermissionCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('security:add-permission')
+            ->setName('security:rbac:permission:add')
             ->setDescription('Add permission to RBAC system');
     }
 
@@ -48,7 +45,6 @@ class RbacAddPermissionCommand extends Command
             $path = "/".implode('/', $pathNodes);
             $path = str_replace("/root", "/", $path);
             $path = str_replace("//", "/", $path);
-            echo $path.PHP_EOL;
             $permissions[$path] = $permission;
         }
         ksort($permissions);
@@ -60,7 +56,7 @@ class RbacAddPermissionCommand extends Command
         $question = new ChoiceQuestion('Enter the parent of the permission : ', array_keys($permissions), 0);
         $parentPath = $helper->ask($input, $output, $question);
         $permission = $this->permissionManager->add($title, $description, $permissions[$parentPath]->getId());
-        
+
         return Command::SUCCESS;
     }
 }

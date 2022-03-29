@@ -109,7 +109,6 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
             ORDER BY
                 parent.left
         ";
-error_log("node ".$nodeId);
         $query = $this->getEntityManager()->createQuery($dql);
         $query->setParameter(':nodeId', $nodeId);
         $result = $query->getResult();

@@ -3,8 +3,6 @@
 namespace PhpRbacBundle\Command;
 
 use PhpRbacBundle\Core\Manager\RoleManager;
-use PhpRbacBundle\Entity\Role;
-use PhpRbacBundle\Entity\Permission;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 #[AsCommand(
-    name: 'security:add-role',
+    name: 'security:rbac:role:add',
     description: 'Add role to RBAC system',
 )]
 class RbacAddRoleCommand extends Command
@@ -34,7 +32,7 @@ class RbacAddRoleCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('security:add-role')
+            ->setName('security:rbac:role:add')
             ->setDescription('Add role to RBAC system');
     }
 
@@ -49,7 +47,6 @@ class RbacAddRoleCommand extends Command
             $path = "/".implode('/', $pathNodes);
             $path = str_replace("/root", "/", $path);
             $path = str_replace("//", "/", $path);
-            echo $path.PHP_EOL;
             $roles[$path] = $role;
         }
         ksort($roles);
@@ -61,7 +58,7 @@ class RbacAddRoleCommand extends Command
         $question = new ChoiceQuestion('Enter the parent of the role : ', array_keys($roles), 0);
         $parentPath = $helper->ask($input, $output, $question);
         $role = $this->roleManager->add($title, $description, $roles[$parentPath]->getId());
-        
+
         return Command::SUCCESS;
     }
 }
