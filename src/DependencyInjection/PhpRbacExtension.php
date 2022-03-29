@@ -24,7 +24,7 @@ class PhpRbacExtension extends Extension
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../config'));
         $loader->load('services.yml');
-        
+
         $container->registerForAutoconfiguration(PermissionManagerInterface::class)
             ->setPublic(true);
         $container->registerForAutoconfiguration(RoleManagerInterface::class)
@@ -33,8 +33,7 @@ class PhpRbacExtension extends Extension
             ->setPublic(true);
 
         $definition = $container->getDefinition(AccessControlDriver::class);
-        // dump($definition->getMethodCalls());
-        $definition->addMethodCall('load', [$config]); //("default", $config['no_authentication_section']['default']);            
+        $definition->addMethodCall('load', [$config]);
     }
 
     public function getAlias(): string

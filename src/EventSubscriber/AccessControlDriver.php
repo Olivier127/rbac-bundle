@@ -36,7 +36,7 @@ class AccessControlDriver implements EventSubscriberInterface
     }
 
     public function onKernelController(ControllerEvent $event)
-    {        
+    {
         $controllers = $event->getController();
         if (!is_array($controllers)) {
             return;
@@ -48,7 +48,6 @@ class AccessControlDriver implements EventSubscriberInterface
         $attributes = $reflection->getAttributes(IsGranted::class) + $reflection->getAttributes(HasRole::class);
         if (is_array($attributes) && !empty($attributes)) {
             $user = $this->security->getUser();
-            // $token = $event->getRequest()->query->get('token');
             if (empty($user)) {
                 if (strtolower($this->config['no_authentication_section']['default']) == 'allow') {
                     $this->accessControlLogger->debug('IsGranted on anonymous action', compact('controller', 'method'));
