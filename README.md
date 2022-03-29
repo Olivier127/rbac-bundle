@@ -1,6 +1,6 @@
 # PhpRbacBundle
 
-PhpRBACBundle is symfony 6 bundle with fulle access control library for PHP. It provides NIST Level 2 Standard Hierarchical Role Based Access Control as an easy to use library to PHP developers. It's a rework of the phprbac.net library made by OWASP for synfony 6.
+PhpRBACBundle is symfony 6 bundle with full access control library for PHP. It provides NIST Level 2 Standard Hierarchical Role Based Access Control as an easy to use library to PHP developers. It's a rework of the phprbac.net library made by OWASP for symfony 6.
 
 # How it works ?
 
@@ -54,10 +54,10 @@ security:
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
-        
+
     access_control:
-        - { path: ^/backend, roles: ROLE_USER }       
-        - { path: ^/todolist, roles: ROLE_USER }       
+        - { path: ^/backend, roles: ROLE_USER }
+        - { path: ^/todolist, roles: ROLE_USER }
 </pre>
 
 ## Creation the roles and permissions

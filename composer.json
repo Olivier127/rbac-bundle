@@ -1,9 +1,9 @@
 {
     "name": "olivier127/rbac-bundle",
     "type": "symfony-bundle",
-    "description": "Symfony PhpRabcBundle allow to use RBAC control access for synfony project",
+    "description": "Symfony PhpRabcBundle allow to use RBAC control access for symfony project",
     "keywords": [
-        "RBAC", "Security", "Access-Control", "Role", "phprbac.net", "owasp"
+        "RBAC", "Security", "Access-Control", "Role", "phprbac.net", "owasp", "symfony", "bundle", "security"
     ],
     "license": "MIT",
     "authors": [
