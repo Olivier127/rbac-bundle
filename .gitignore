@@ -1,2 +1,11 @@
-vendor
-build
+/vendor/
+/composer.lock
+
+/build/*
+!/build/.gitignore
+
+/tests/Application/yarn.lock
+
+/behat.yml
+/phpspec.yml
+/.phpunit.result.cache
