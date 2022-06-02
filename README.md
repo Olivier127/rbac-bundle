@@ -26,7 +26,7 @@ Go to https://phprbac.net/ :) to have the representation of permissions and role
 
 just include the package with composer:
 
-<pre>composer require olivier127/phprbac-bundle</pre>
+<pre>composer require olivier127/rbac-bundle</pre>
 
 register the bundle inside config/bundles.php
 
