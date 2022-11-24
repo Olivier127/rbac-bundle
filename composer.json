@@ -22,9 +22,9 @@
         "doctrine/orm": "^2.11"
     },
     "autoload": {
-        "psr-4": {
-            "PhpRbacBundle\\": "src/",
-            "Tests\\PhpRbacBundle\\": "tests/"
-        }
+        "psr-4": { "PhpRbacBundle\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Tests\\PhpRbacBundle\\": "tests/" }
     }
 }
