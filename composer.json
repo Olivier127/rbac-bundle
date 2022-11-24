@@ -25,6 +25,6 @@
         "psr-4": { "PhpRbacBundle\\": "src/" }
     },
     "autoload-dev": {
-        "psr-4": { "PhpRbacBundle\\Tests\\": "tests/" }
+        "psr-4": { "Tests\\PhpRbacBundle\\": "tests/" }
     }
 }

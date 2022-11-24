@@ -1,8 +1,8 @@
 <?php
-namespace PhpRbacBundle\Tests\Permission;
+namespace Test\PhpRbacBundle\Permission;
 
 use Exception;
-use PhpRbacBundle\Tests\KernelHelper;
+use Test\PhpRbacBundle\KernelHelper;
 use PhpRbacBundle\Core\Manager\RoleManager;
 use PhpRbacBundle\Core\Manager\PermissionManager;
 use PhpRbacBundle\Exception\RbacPermissionNotFoundException;

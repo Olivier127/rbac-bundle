@@ -1,11 +1,11 @@
 <?php
-namespace PhpRbacBundle\Tests\Role;
+namespace Test\PhpRbacBundle\Role;
 
 use Exception;
 use App\Entity\User;
 use PhpRbacBundle\Core\Rbac;
 use App\Repository\UserRepository;
-use PhpRbacBundle\Tests\KernelHelper;
+use Test\PhpRbacBundle\KernelHelper;
 use PhpRbacBundle\Core\Manager\RoleManager;
 use PhpRbacBundle\Core\Manager\RbacInterface;
 use PhpRbacBundle\Core\Manager\PermissionManager;
