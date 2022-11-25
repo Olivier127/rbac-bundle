@@ -60,6 +60,55 @@ security:
         - { path: ^/todolist, roles: ROLE_USER }
 </pre>
 
+## Add PhpRbac configuration
+
+You must create your own entities for driving permissions and roles.
+
+example :
+
+```php
+/* src/Entity/Role.php */
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use PhpRbacBundle\Entity\Role as EntityRole;
+use PhpRbacBundle\Repository\RoleRepository;
+
+#[ORM\Entity(repositoryClass: RoleRepository::class)]
+#[ORM\Table('my_roles')]
+class Role extends EntityRole
+{
+
+}
+```
+
+```php
+/* src/Entity/Permission.php */
+namespace App\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use PhpRbacBundle\Entity\Permission as EntityPermission;
+use PhpRbacBundle\Repository\PermissionRepository;
+
+#[ORM\Entity(repositoryClass: PermissionRepository::class)]
+#[ORM\Table('my_permissions')]
+class Permission extends EntityPermission
+{
+
+}
+```
+
+add php_rbac.yaml to associate theses entities to the rbac core
+```yaml
+# config/packages/php_rbac.yaml
+php_rbac:
+  no_authentication_section:
+    default: deny
+  resolve_target_entities:
+    role: App\Entity\Role
+    permission: App\Entity\Permission
+```
+
 ## Creation the roles and permissions
 Add all the roles and the permissions you need with the RoleManager and the PermissionManager
 
