@@ -8,7 +8,7 @@ use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 
 trait NodeEntityTrait
 {
-    public function deleteNode(int $nodeId) : bool
+    public function deleteNode(int $nodeId): bool
     {
         if ($nodeId == NodeManagerInterface::ROOT_ID) {
             throw new RbacException("The Root Node cannot be deleted");
@@ -39,7 +39,7 @@ trait NodeEntityTrait
         return true;
     }
 
-    public function deleteSubtree(int $nodeId) : bool
+    public function deleteSubtree(int $nodeId): bool
     {
         if ($nodeId == NodeManagerInterface::ROOT_ID) {
             throw new RbacException("The Root Node cannot be deleted");
@@ -69,9 +69,9 @@ trait NodeEntityTrait
         return true;
     }
 
-    public function pathId(string $path, string $classException) : mixed
+    public function pathId(string $path, string $classException): mixed
     {
-        $pathCmpl = "root".strtolower($path);
+        $pathCmpl = "root" . strtolower($path);
         $tableName = $this->getClassMetadata()
             ->getTableName();
         $parts = explode("/", $pathCmpl);
@@ -116,7 +116,7 @@ trait NodeEntityTrait
             ->executeQuery($sql);
     }
 
-    public function updateForAdd(int $parentId, string $nodeClass, string $title, string $description) : Node
+    public function updateForAdd(int $parentId, string $nodeClass, string $title, string $description): Node
     {
         $parent = $this->getById($parentId);
 
@@ -130,7 +130,7 @@ trait NodeEntityTrait
         $query->setParameter(":right", $parent->getRight());
         $query->execute();
 
-        $node = new $nodeClass;
+        $node = new $nodeClass();
         $node->setTitle($title)
             ->setDescription($description)
             ->setLeft($parent->getRight())

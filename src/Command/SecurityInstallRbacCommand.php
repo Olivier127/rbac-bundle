@@ -38,7 +38,7 @@ class SecurityInstallRbacCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Role permission installation');
-        $permission = new Permission;
+        $permission = new Permission();
         $permission->setId(1)
             ->setTitle('root')
             ->setDescription("Root")
@@ -46,7 +46,7 @@ class SecurityInstallRbacCommand extends Command
             ->setRight(1);
         $this->permissionRepository->add($permission, true);
         $io->note('Role root installation');
-        $role = new Role;
+        $role = new Role();
         $role->setId(1)
             ->setTitle('root')
             ->setDescription("Root")

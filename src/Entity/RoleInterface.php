@@ -2,16 +2,17 @@
 
 namespace PhpRbacBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
+
 interface RoleInterface extends NodeInterface
 {
-    /**
-     * Get All the permissions assign to the role
-     *
-     * @return PermissionInterface[]
-     */
-    public function getPermissions(): array;
+    public function getPermissions(): Collection;
 
-    public function addPermission(Permission $permission): self;
+    public function addPermission(PermissionInterface $permission): RoleInterface;
 
-    public function removePermission(Permission $permission): self;
+    public function removePermission(PermissionInterface $permission): RoleInterface;
+
+    public function getParent(): RoleInterface;
+
+    public function setParent(RoleInterface $parent): RoleInterface;
 }

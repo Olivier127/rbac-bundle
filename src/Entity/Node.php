@@ -4,90 +4,86 @@ namespace PhpRbacBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-class Node implements NodeInterface
+#[ORM\MappedSuperclass]
+#[ORM\UniqueConstraint('unique_code', ['code', 'parent_id'])]
+#[ORM\Index(name:"permission_idx", columns: ["code", "tree_left", "tree_right"])]
+abstract class Node implements NodeInterface
 {
-    /**
-     * @var ?int
-     */
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    protected $id;
-
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255)]
-    protected $title;
+    protected ?string $code;
 
-    /**
-     * @var string
-     */
     #[ORM\Column(type: 'string', length: 255)]
-    protected $description;
+    protected ?string $description;
 
-    /**
-     * @var int
-     */
-    #[ORM\Column(name:'`left`', type: 'integer')]
-    protected $left;
+    #[ORM\Column(name:'tree_left', type: 'integer')]
+    protected ?int $left;
 
-    /**
-     * @var int
-     */
-    #[ORM\Column(name:'`right`', type: 'integer')]
-    protected $right;
+    #[ORM\Column(name:'tree_right', type: 'integer')]
+    protected ?int $right;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getTitle() : string
-    {
-        return $this->title;
-    }
-
-    public function setTitle(string $title) : static
-    {
-        $this->title = strtolower($title);
-
-        return $this;
-    }
-
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description) : static
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    public function getLeft() : int
+    public function getLeft(): int
     {
         return $this->left;
     }
 
-    public function setLeft(int $left) : static
+    public function setLeft(int $left): static
     {
         $this->left = $left;
 
         return $this;
     }
 
-    public function getRight() : int
+    public function getRight(): int
     {
         return $this->right;
     }
 
-    public function setRight(int $right) : static
+    public function setRight(int $right): static
     {
         $this->right = $right;
 
         return $this;
     }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): static
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function __toString() : string
+    {
+        return $this->getCode();
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(int $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
 }

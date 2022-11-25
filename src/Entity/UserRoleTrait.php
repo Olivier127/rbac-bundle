@@ -2,41 +2,44 @@
 
 namespace PhpRbacBundle\Entity;
 
-use PhpRbacBundle\Repository\UserRoleRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use PhpRbacBundle\Entity\RoleInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use PhpRbacBundle\Repository\UserRoleRepository;
 
 #[ORM\Entity(repositoryClass: UserRoleRepository::class)]
 
 trait UserRoleTrait
 {
-    #[ORM\ManyToMany(targetEntity: Role::class, cascade:['persist', 'remove', 'refresh'])]
+    #[ORM\ManyToMany(targetEntity: RoleInterface::class, cascade:['persist', 'remove', 'refresh'])]
     #[ORM\JoinTable(name: "user_role")]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", onDelete: "cascade")]
     #[ORM\InverseJoinColumn(name: "role_id", referencedColumnName: "id", onDelete: "cascade")]
-    private $rbacRoles;
+    private Collection $rbacRoles;
+
+    public function __construct()
+    {
+        $this->rbacRoles = new ArrayCollection();
+    }
 
     /**
-     * @return Collection<int, Role>
+     * @return Collection<int, RoleInterface>
      */
     public function getRbacRoles(): Collection
     {
         return $this->rbacRoles;
     }
 
-    public function addRbacRole(Role $role): self
+    public function addRbacRole(RoleInterface $role): void
     {
         if (!$this->rbacRoles->contains($role)) {
             $this->rbacRoles[] = $role;
         }
-
-        return $this;
     }
 
-    public function removeRbacRole(Role $role): self
+    public function removeRbacRole(RoleInterface $role): void
     {
         $this->rbacRoles->removeElement($role);
-
-        return $this;
     }
 }

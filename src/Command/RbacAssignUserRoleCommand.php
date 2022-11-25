@@ -47,7 +47,7 @@ class RbacAssignUserRoleCommand extends Command
         $roles = [];
         foreach ($rolesTmp as $role) {
             $pathNodes = $this->roleRepository->getPath($role->getId());
-            $path = "/".implode('/', $pathNodes);
+            $path = "/" . implode('/', $pathNodes);
             $path = str_replace("/root", "/", $path);
             $path = str_replace("//", "/", $path);
             $roles[$path] = $role;

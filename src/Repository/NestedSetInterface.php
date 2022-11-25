@@ -1,4 +1,5 @@
 <?php
+
 namespace PhpRbacBundle\Repository;
 
 use PhpRbacBundle\Entity\NodeInterface;
@@ -15,7 +16,7 @@ interface NestedSetInterface
      * @throws RbacException Not Found
      * @return int
      */
-    public function getPathId(string $path) : int;
+    public function getPathId(string $path): int;
 
     /**
      * Return the node by id
@@ -25,7 +26,7 @@ interface NestedSetInterface
      * @throws RbacException Not Found
      * @return NodeInterface
      */
-    public function getById(int $nodeId) : NodeInterface;
+    public function getById(int $nodeId): NodeInterface;
 
     /**
      * Return the nodes of the path
@@ -35,7 +36,7 @@ interface NestedSetInterface
      * @throws RbacException Not Found
      * @return NodeInterface[]
      */
-    public function getPath(int $nodeId) : array;
+    public function getPath(int $nodeId): array;
 
     /**
      * Return the immediat children of a node
@@ -45,7 +46,7 @@ interface NestedSetInterface
      * @throws RbacException Not Found
      * @return NodeInterface[]
      */
-    public function getChildren(int $nodeId) : array;
+    public function getChildren(int $nodeId): array;
 
     /**
      * Deletes a node and shifts the children up
@@ -54,7 +55,7 @@ interface NestedSetInterface
      *
      * @return bool
      */
-    public function deleteNode(int $nodeId) : bool;
+    public function deleteNode(int $nodeId): bool;
 
     /**
      * Deletes a node and all its descendants
@@ -63,7 +64,7 @@ interface NestedSetInterface
      *
      * @return bool
      */
-    public function deleteSubtree(int $nodeId) : bool;
+    public function deleteSubtree(int $nodeId): bool;
 
     /**
      * Add a node in the tree
@@ -74,5 +75,5 @@ interface NestedSetInterface
      *
      * @return void
      */
-    public function addNode(string $title, string $description, int $parentId = NodeManagerInterface::ROOT_ID) : NodeInterface;
+    public function addNode(string $title, string $description, int $parentId = NodeManagerInterface::ROOT_ID): NodeInterface;
 }

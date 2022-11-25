@@ -22,8 +22,8 @@ abstract class NodeManager implements NodeManagerInterface
     public function add(string $title, string $description, int $parentId = self::ROOT_ID): NodeInterface
     {
         try {
-            $parentPath = $parentId==Self::ROOT_ID?"":$this->getPath($parentId);
-            $id = $this->getPathId($parentPath."/".$title);
+            $parentPath = $parentId == self::ROOT_ID ? "" : $this->getPath($parentId);
+            $id = $this->getPathId($parentPath . "/" . $title);
             return $this->getNode($id);
         } catch (RbacException) {
             return $this->repository->addNode($title, $description, $parentId);
@@ -33,7 +33,7 @@ abstract class NodeManager implements NodeManagerInterface
     public function addPath(string $path, array $descriptions): NodeInterface
     {
         if ($path[0] !== '/') {
-            throw new \Exception ("The path supplied is not valid.");
+            throw new \Exception("The path supplied is not valid.");
         }
 
         $path = substr($path, 1);
@@ -45,9 +45,9 @@ abstract class NodeManager implements NodeManagerInterface
         $node = null;
 
         foreach ($parts as $part) {
-            $description = array_key_exists(strtolower($part), $descriptions)?$descriptions[$part]:"";
+            $description = array_key_exists(strtolower($part), $descriptions) ? $descriptions[$part] : "";
 
-            $currentPath .= "/".$part;
+            $currentPath .= "/" . $part;
             try {
                 $pathId = $this->getPathId($currentPath);
                 $parentId = $pathId;
@@ -87,7 +87,7 @@ abstract class NodeManager implements NodeManagerInterface
         return $node;
     }
 
-    public function getPath(int $nodeId) : string
+    public function getPath(int $nodeId): string
     {
         $nodes = $this->repository->getPath($nodeId);
         $path = "";
@@ -96,7 +96,7 @@ abstract class NodeManager implements NodeManagerInterface
         }
         foreach ($nodes as $node) {
             if ($node->getId() != self::ROOT_ID) {
-                $path .= "/".$node->getTitle();
+                $path .= "/" . $node->getTitle();
             }
         }
 
@@ -118,7 +118,7 @@ abstract class NodeManager implements NodeManagerInterface
         return count($this->repository->getPath($nodeId));
     }
 
-    public function getParent(int $nodeId) : NodeInterface
+    public function getParent(int $nodeId): NodeInterface
     {
         $nodes = $this->repository->getPath($nodeId);
         if ($nodeId == self::ROOT_ID) {
@@ -132,5 +132,4 @@ abstract class NodeManager implements NodeManagerInterface
     {
         return $this->repository->reset();
     }
-
 }

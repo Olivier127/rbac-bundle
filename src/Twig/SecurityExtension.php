@@ -24,7 +24,6 @@ use Symfony\Component\Security\Core\Security;
  */
 final class SecurityExtension extends AbstractExtension
 {
-
     public function __construct(
         private RbacInterface $rbacInterface,
         private Security $security

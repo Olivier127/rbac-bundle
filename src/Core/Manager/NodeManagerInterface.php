@@ -108,7 +108,7 @@ interface NodeManagerInterface
      * @throws RbacException
      * @return int
      */
-    public function getPathId(string $path) : int;
+    public function getPathId(string $path): int;
 
     /**
      * Return the path of a node
@@ -118,7 +118,7 @@ interface NodeManagerInterface
      * @throws RbacException
      * @return string
      */
-    public function getPath(int $nodeId) : string;
+    public function getPath(int $nodeId): string;
 
     /**
      * Return the parent of a node
@@ -127,5 +127,5 @@ interface NodeManagerInterface
      *
      * @return NodeInterface
      */
-    public function getParent(int $nodeId) : NodeInterface;
+    public function getParent(int $nodeId): NodeInterface;
 }

@@ -44,7 +44,7 @@ class RbacAssignRolePermissionCommand extends Command
         $roles = [];
         foreach ($rolesTmp as $role) {
             $pathNodes = $this->roleRepository->getPath($role->getId());
-            $path = "/".implode('/', $pathNodes);
+            $path = "/" . implode('/', $pathNodes);
             $path = str_replace("/root", "/", $path);
             $path = str_replace("//", "/", $path);
             $roles[$path] = $role;
@@ -55,7 +55,7 @@ class RbacAssignRolePermissionCommand extends Command
         $permissions = [];
         foreach ($permissionsTmp as $permission) {
             $pathNodes = $this->permissionRepository->getPath($permission->getId());
-            $path = "/".implode('/', $pathNodes);
+            $path = "/" . implode('/', $pathNodes);
             $path = str_replace("/root", "/", $path);
             $path = str_replace("//", "/", $path);
             $permissions[$path] = $permission;

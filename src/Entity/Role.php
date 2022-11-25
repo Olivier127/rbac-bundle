@@ -4,45 +4,42 @@ namespace PhpRbacBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
-use PhpRbacBundle\Repository\RoleRepository;
 
-#[ORM\Entity(repositoryClass: RoleRepository::class)]
-#[ORM\Index(name:"role_idx", columns: ["title", "left", "right"])]
+#[ORM\MappedSuperclass]
 class Role extends Node implements RoleInterface
 {
-    #[ORM\ManyToMany(targetEntity: Permission::class, cascade:['persist', 'remove', 'refresh'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    protected ?int $id;
+
+    #[ORM\ManyToMany(targetEntity: PermissionInterface::class, cascade:['persist', 'remove', 'refresh'])]
     #[ORM\JoinTable(name: "role_permission")]
     #[ORM\JoinColumn(name: "role_id", referencedColumnName: "id", onDelete: "cascade")]
     #[ORM\InverseJoinColumn(name: "permission_id", referencedColumnName: "id", onDelete: "cascade")]
-    private $permissions;
+    private Collection $permissions;
+
+    #[ORM\OneToOne(targetEntity: RoleInterface::class)]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true, onDelete:"cascade")]
+    protected ?RoleInterface $parent = null;
 
     public function __construct()
     {
         $this->permissions = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    public function setId(int $id) : self
+    public function getId(): ?int
     {
-        $this->id = $id;
-
-        return $this;
+        return $this->id;
     }
 
-    /**
-     * @return Collection<int, Permission>
-     */
-    public function getCollectionPermissions() : Collection
+    public function getPermissions(): Collection
     {
         return $this->permissions;
     }
 
-    public function getPermissions() : array
-    {
-        return $this->getCollectionPermissions()->toArray();
-    }
 
-
-    public function addPermission(Permission $permission): self
+    public function addPermission(PermissionInterface $permission): RoleInterface
     {
         if (!$this->permissions->contains($permission)) {
             $this->permissions->add($permission);
@@ -51,22 +48,29 @@ class Role extends Node implements RoleInterface
         return $this;
     }
 
-    public function removePermission(Permission $permission): self
+    public function removePermission(PermissionInterface $permission): RoleInterface
     {
         $this->permissions->removeElement($permission);
 
         return $this;
     }
 
-    public function setPermissions(?Collection $permissions) : self
+    public function setPermissions(?Collection $permissions): RoleInterface
     {
         $this->permissions = $permissions;
 
         return $this;
     }
 
-    public function __toString()
+    public function getParent(): RoleInterface
     {
-        return $this->getTitle();
+        return $this->parent;
+    }
+
+    public function setParent(RoleInterface $parent): RoleInterface
+    {
+        $this->parent = $parent;
+
+        return $this;
     }
 }

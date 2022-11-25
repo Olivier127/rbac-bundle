@@ -50,42 +50,12 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
         }
     }
 
-    // /**
-    //  * @return Permission[] Returns an array of Permission objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Permission
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
-
-    public function getPathId(string $path) : int
+    public function getPathId(string $path): int
     {
         return $this->pathId($path, RbacPermissionNotFoundException::class);
     }
 
-    public function getById(int $nodeId) : Permission
+    public function getById(int $nodeId): Permission
     {
         $node = $this->find($nodeId);
         if (empty($node)) {
@@ -95,7 +65,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
         return $node;
     }
 
-    public function getPath(int $nodeId) : array
+    public function getPath(int $nodeId): array
     {
         $dql = "
             SELECT
@@ -120,7 +90,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
         return $result;
     }
 
-    public function getChildren(int $nodeId) : array
+    public function getChildren(int $nodeId): array
     {
         $tableName = $this->getClassMetadata()
             ->getTableName();
@@ -160,7 +130,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
                 node.left
         ";
 
-        $rsm = new ResultSetMapping;
+        $rsm = new ResultSetMapping();
         $rsm->addEntityResult($this->getClassName(), 'node');
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
         $query->setParameter(':nodeId', $nodeId);
@@ -174,61 +144,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
         return $result;
     }
 
-    // public function deleteNode(int $nodeId) : bool
-    // {
-    //     $info = $this->getById($nodeId);
-
-    //     $dql = "DELETE {$this->getClassName()} node WHERE node.left = :left";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":left", $info->getLeft());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - 1, node.left = node.left - 1 WHERE node.left BETWEEN :left AND :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":left", $info->getLeft());
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - 2 WHERE node.right > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.left = node.left - 2 WHERE node.left > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     return true;
-    // }
-
-    // public function deleteSubtree(int $nodeId) : bool
-    // {
-    //     $info = $this->getById($nodeId);
-    //     $width = $info->getRight() - $info->getLeft() + 1;
-
-    //     $dql = "DELETE {$this->getClassName()} node WHERE node.left BETWEEN :left AND :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":left", $info->getLeft());
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - :widht WHERE node.right > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":width", $width);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.left = node.left - :widht WHERE node.left > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":width", $width);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     return true;
-    // }
-
-    public function hasPermission(int $permissionId, mixed $userId) : bool
+    public function hasPermission(int $permissionId, mixed $userId): bool
     {
         $pdo = $this->getEntityManager()->getConnection();
 

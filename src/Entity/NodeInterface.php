@@ -6,9 +6,9 @@ interface NodeInterface
 {
     public function getId(): ?int;
 
-    public function getTitle(): string;
+    public function getCode(): ?string;
 
-    public function setTitle(string $title): static;
+    public function setCode(string $code): static;
 
     public function getDescription(): string;
 

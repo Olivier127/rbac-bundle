@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace PhpRbacBundle\Attribute\AccessControl;
@@ -13,7 +14,7 @@ final class HasRole implements RBACAttributeInterface
 {
     public function __construct(
         public readonly string $role,
-        public readonly ?int $statusCode=403,
+        public readonly ?int $statusCode = 403,
         public readonly ?string $message = 'This ressource is not allowed for the current user'
     ) {
     }
@@ -26,5 +27,4 @@ final class HasRole implements RBACAttributeInterface
             return false;
         }
     }
-
 }

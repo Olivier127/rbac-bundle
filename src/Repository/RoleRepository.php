@@ -50,41 +50,12 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         }
     }
 
-    // /**
-    //  * @return Role[] Returns an array of Role objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Role
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-
-    public function getPathId(string $path,) : int
+    public function getPathId(string $path,): int
     {
         return $this->pathId($path, RbacRoleNotFoundException::class);
     }
 
-    public function getById(int $nodeId) : Role
+    public function getById(int $nodeId): Role
     {
         $node = $this->find($nodeId);
         if (empty($node)) {
@@ -94,7 +65,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         return $node;
     }
 
-    public function getPath(int $nodeId) : array
+    public function getPath(int $nodeId): array
     {
         $dql = "
             SELECT
@@ -120,7 +91,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         return $result;
     }
 
-    public function getChildren(int $nodeId) : array
+    public function getChildren(int $nodeId): array
     {
         $tableName = $this->getClassMetadata()
             ->getTableName();
@@ -160,7 +131,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
                 node.left
         ";
 
-        $rsm = new ResultSetMapping;
+        $rsm = new ResultSetMapping();
         $rsm->addEntityResult($this->getClassName(), 'node');
         $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
         $query->setParameter(':nodeId', $nodeId);
@@ -228,7 +199,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
     //     return true;
     // }
 
-    public function deletePermissions(Role $role) : Role
+    public function deletePermissions(Role $role): Role
     {
         $role->setPermissions(null);
         $this->add($role, true);
@@ -236,7 +207,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         return $role;
     }
 
-    public function hasPermission(int $roleId, int $permissionId) : bool
+    public function hasPermission(int $roleId, int $permissionId): bool
     {
         $pdo = $this->getEntityManager()->getConnection();
 
@@ -277,7 +248,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         return $row['result'] >= 1;
     }
 
-    public function hasRole(int $roleId, mixed $userId) : bool
+    public function hasRole(int $roleId, mixed $userId): bool
     {
         $pdo = $this->getEntityManager()->getConnection();
         $sql = "
