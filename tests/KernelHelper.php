@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class KernelHelper extends KernelTestCase
 {
-    static protected $kernel;
+    protected static $kernel;
 
     /**
      * Container
