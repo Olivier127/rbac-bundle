@@ -69,11 +69,11 @@ interface NestedSetInterface
     /**
      * Add a node in the tree
      *
-     * @param string $title
+     * @param string $code
      * @param string $description
      * @param int    $parentId
      *
      * @return void
      */
-    public function addNode(string $title, string $description, int $parentId = NodeManagerInterface::ROOT_ID): NodeInterface;
+    public function addNode(string $code, string $description, int $parentId = NodeManagerInterface::ROOT_ID): NodeInterface;
 }

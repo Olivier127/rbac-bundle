@@ -13,7 +13,7 @@ use PhpRbacBundle\Attribute\RBACAttributeInterface;
 final class IsGranted implements RBACAttributeInterface
 {
     public function __construct(
-        public readonly string $permission,
+        public readonly string $permission = "",
         public readonly ?int $statusCode = 403,
         public readonly ?string $message = 'This ressource is not allowed for the current user'
     ) {

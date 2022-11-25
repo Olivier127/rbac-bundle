@@ -6,13 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 #[ORM\MappedSuperclass]
-class Role extends Node implements RoleInterface
+abstract class Role extends Node implements RoleInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    protected ?int $id;
-
     #[ORM\ManyToMany(targetEntity: PermissionInterface::class, cascade:['persist', 'remove', 'refresh'])]
     #[ORM\JoinTable(name: "role_permission")]
     #[ORM\JoinColumn(name: "role_id", referencedColumnName: "id", onDelete: "cascade")]
@@ -37,7 +32,6 @@ class Role extends Node implements RoleInterface
     {
         return $this->permissions;
     }
-
 
     public function addPermission(PermissionInterface $permission): RoleInterface
     {

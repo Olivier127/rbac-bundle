@@ -10,6 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 use PhpRbacBundle\Exception\RbacPermissionNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use PhpRbacBundle\Entity\NodeInterface;
+use PhpRbacBundle\Entity\PermissionInterface;
+use PhpRbacBundle\Entity\RoleInterface;
 
 /**
  * @method Permission|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,10 +24,33 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
 {
     use NodeEntityTrait;
 
-    public function __construct(ManagerRegistry $registry)
+    private string $roleTableName;
+
+    private string $tableName;
+
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, Permission::class);
+        parent::__construct($registry, $entityClass);
+
+        $this->roleTableName = $this->getEntityManager()
+            ->getClassMetadata(RoleInterface::class)
+            ->getTableName();
+        $this->tableName = $this->getClassMetadata()
+            ->getTableName();
     }
+
+    public function initTable()
+    {
+        $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE role_permission; TRUNCATE {$this->tableName}; SET FOREIGN_KEY_CHECKS = 1";
+        $this->getEntityManager()
+            ->getConnection()
+            ->executeQuery($sql);
+        $sql = "INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1)";
+        $this->getEntityManager()
+            ->getConnection()
+            ->executeQuery($sql);
+    }
+
 
     /**
      * @throws ORMException
@@ -32,9 +58,11 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
      */
     public function add(Permission $entity, bool $flush = true): void
     {
-        $this->_em->persist($entity);
+        $this->getEntityManager()
+            ->persist($entity);
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()
+                ->flush();
         }
     }
 
@@ -44,9 +72,11 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
      */
     public function remove(Permission $entity, bool $flush = true): void
     {
-        $this->_em->remove($entity);
+        $this->getEntityManager()
+            ->remove($entity);
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()
+                ->flush();
         }
     }
 
@@ -59,7 +89,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
     {
         $node = $this->find($nodeId);
         if (empty($node)) {
-            throw new RbacPermissionNotFoundException();
+            throw new RbacPermissionNotFoundException("Permission {$nodeId} not found");
         }
 
         return $node;
@@ -79,7 +109,8 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
             ORDER BY
                 parent.left
         ";
-        $query = $this->getEntityManager()->createQuery($dql);
+        $query = $this->getEntityManager()
+            ->createQuery($dql);
         $query->setParameter(':nodeId', $nodeId);
         $result = $query->getResult();
 
@@ -92,24 +123,21 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
 
     public function getChildren(int $nodeId): array
     {
-        $tableName = $this->getClassMetadata()
-            ->getTableName();
-
         $sql = "
             SELECT
                 node.*,
                 (COUNT(parent.id)-1 - (sub_tree.innerDepth )) AS depth
             FROM
-                {$tableName} as node,
-                {$tableName} as parent,
-                {$tableName} as sub_parent,
+                {$this->tableName} as node,
+                {$this->tableName} as parent,
+                {$this->tableName} as sub_parent,
                 (
                     SELECT
                         node.id,
                         (COUNT(parent.id) - 1) AS innerDepth
                     FROM
-                        {$tableName} AS node,
-                        {$tableName} AS parent
+                        {$this->tableName} AS node,
+                        {$this->tableName} AS parent
                     WHERE
                         node.left BETWEEN parent.left AND parent.right
                         AND (node.id = :nodeI)
@@ -132,7 +160,8 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
 
         $rsm = new ResultSetMapping();
         $rsm->addEntityResult($this->getClassName(), 'node');
-        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query = $this->getEntityManager()
+            ->createNativeQuery($sql, $rsm);
         $query->setParameter(':nodeId', $nodeId);
 
         $result = $query->getResult();
@@ -146,7 +175,8 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
 
     public function hasPermission(int $permissionId, mixed $userId): bool
     {
-        $pdo = $this->getEntityManager()->getConnection();
+        $pdo = $this->getEntityManager()
+            ->getConnection();
 
         $sql = "
             SELECT
@@ -154,13 +184,13 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
             FROM
                 user_role
             INNER JOIN
-                role AS TRdirect ON TRdirect.ID=user_role.role_id
+                {$this->roleTableName} AS TRdirect ON TRdirect.ID=user_role.role_id
             INNER JOIN
-                role AS TR ON TR.`left` BETWEEN TRdirect.`left` AND TRdirect.`right`
+                {$this->roleTableName} AS TR ON TR.tree_left BETWEEN TRdirect.tree_left AND TRdirect.tree_right
             INNER JOIN
-                (permission AS TPdirect
+                ({$this->tableName} AS TPdirect
                     INNER JOIN
-                        permission AS TP ON TPdirect.`left` BETWEEN TP.`left` AND TP.`right`
+                    {$this->tableName} AS TP ON TPdirect.tree_left BETWEEN TP.tree_left AND TP.tree_right
                     INNER JOIN
                         role_permission AS TRel ON TP.ID=TRel.permission_id
                 ) ON TR.ID = TRel.role_id
@@ -181,8 +211,11 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
         return $row['result'] >= 1;
     }
 
-    public function addNode(string $title, string $description, int $parentId = NodeManagerInterface::ROOT_ID): Permission
+    public function addNode(string $code, string $description, int $parentId = NodeManagerInterface::ROOT_ID): PermissionInterface
     {
-        return $this->updateForAdd($parentId, Permission::class, $title, $description);
+        /** @var PermissionInterface $node */
+        $node = $this->updateForAdd($parentId, $this->getClassName(), $code, $description);
+
+        return $node;
     }
 }

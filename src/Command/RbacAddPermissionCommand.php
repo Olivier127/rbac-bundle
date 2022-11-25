@@ -49,13 +49,13 @@ class RbacAddPermissionCommand extends Command
         }
         ksort($permissions);
 
-        $question = new Question('Enter the title of the permission : ');
-        $title = $helper->ask($input, $output, $question);
+        $question = new Question('Enter the code of the permission : ');
+        $code = $helper->ask($input, $output, $question);
         $question = new Question('Enter the description of the permission : ');
         $description = $helper->ask($input, $output, $question);
         $question = new ChoiceQuestion('Enter the parent of the permission : ', array_keys($permissions), 0);
         $parentPath = $helper->ask($input, $output, $question);
-        $permission = $this->permissionManager->add($title, $description, $permissions[$parentPath]->getId());
+        $permission = $this->permissionManager->add($code, $description, $permissions[$parentPath]->getId());
 
         return Command::SUCCESS;
     }

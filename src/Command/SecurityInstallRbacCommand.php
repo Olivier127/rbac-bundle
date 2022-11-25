@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'security:install-rbac',
+    name: 'security:rbac:install',
     description: 'first set of data for rbac installation',
 )]
 class SecurityInstallRbacCommand extends Command
@@ -38,22 +38,9 @@ class SecurityInstallRbacCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $io->note('Role permission installation');
-        $permission = new Permission();
-        $permission->setId(1)
-            ->setTitle('root')
-            ->setDescription("Root")
-            ->setLeft(0)
-            ->setRight(1);
-        $this->permissionRepository->add($permission, true);
+        $this->permissionRepository->initTable();
         $io->note('Role root installation');
-        $role = new Role();
-        $role->setId(1)
-            ->setTitle('root')
-            ->setDescription("Root")
-            ->setLeft(0)
-            ->setRight(1)
-            ->addPermission($permission);
-        $this->roleRepository->add($role, true);
+        $this->roleRepository->initTable();
 
         $io->success('Done');
 

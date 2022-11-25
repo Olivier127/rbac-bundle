@@ -49,13 +49,13 @@ class RbacAddRoleCommand extends Command
         }
         ksort($roles);
 
-        $question = new Question('Enter the title of the role : ');
-        $title = $helper->ask($input, $output, $question);
+        $question = new Question('Enter the code of the role : ');
+        $code = $helper->ask($input, $output, $question);
         $question = new Question('Enter the description of the role : ');
         $description = $helper->ask($input, $output, $question);
         $question = new ChoiceQuestion('Enter the parent of the role : ', array_keys($roles), 0);
         $parentPath = $helper->ask($input, $output, $question);
-        $role = $this->roleManager->add($title, $description, $roles[$parentPath]->getId());
+        $role = $this->roleManager->add($code, $description, $roles[$parentPath]->getId());
 
         return Command::SUCCESS;
     }

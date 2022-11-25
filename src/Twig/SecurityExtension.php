@@ -37,7 +37,11 @@ final class SecurityExtension extends AbstractExtension
         }
 
         try {
-            return $this->rbacInterface->hasPermission($permission, $this->security->getUser()->getId());
+            return $this->rbacInterface->hasPermission(
+                $permission,
+                $this->security->getUser()
+                    ->getId()
+            );
         } catch (RbacException) {
             return false;
         }
@@ -50,7 +54,11 @@ final class SecurityExtension extends AbstractExtension
         }
 
         try {
-            return $this->rbacInterface->hasRole($role, $this->security->getUser()->getId());
+            return $this->rbacInterface->hasRole(
+                $role,
+                $this->security->getUser()
+                    ->getId()
+            );
         } catch (RbacException) {
             return false;
         }

@@ -4,9 +4,12 @@ namespace PhpRbacBundle\Repository;
 
 use Doctrine\ORM\ORMException;
 use PhpRbacBundle\Entity\Role;
+use PhpRbacBundle\Entity\NodeInterface;
+use PhpRbacBundle\Entity\RoleInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpRbacBundle\Entity\PermissionInterface;
 use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 use PhpRbacBundle\Exception\RbacRoleNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -21,9 +24,32 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 {
     use NodeEntityTrait;
 
-    public function __construct(ManagerRegistry $registry)
+    private string $permissionTableName;
+    private string $tableName;
+
+    public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        parent::__construct($registry, Role::class);
+        parent::__construct($registry, $entityClass);
+
+        $this->permissionTableName = $this->getEntityManager()
+            ->getClassMetadata(PermissionInterface::class)
+            ->getTableName();
+        $this->tableName = $this->getClassMetadata()
+            ->getTableName();
+    }
+
+    public function initTable()
+    {
+        $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE user_role; TRUNCATE role_permission; TRUNCATE {$this->tableName};SET FOREIGN_KEY_CHECKS = 1;";
+        $this->getEntityManager()
+            ->getConnection()
+            ->executeQuery($sql);
+
+        $sql = "INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1);";
+        $sql .= "INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1)";
+        $this->getEntityManager()
+            ->getConnection()
+            ->executeQuery($sql);
     }
 
     /**
@@ -80,7 +106,8 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
                 parent.left
         ";
 
-        $query = $this->getEntityManager()->createQuery($dql);
+        $query = $this->getEntityManager()
+            ->createQuery($dql);
         $query->setParameter(':nodeId', $nodeId);
         $result = $query->getResult();
 
@@ -93,24 +120,21 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
     public function getChildren(int $nodeId): array
     {
-        $tableName = $this->getClassMetadata()
-            ->getTableName();
-
         $sql = "
             SELECT
                 node.*,
                 (COUNT(parent.id)-1 - (sub_tree.innerDepth )) AS depth
             FROM
-                {$tableName} as node,
-                {$tableName} as parent,
-                {$tableName} as sub_parent,
+                {$this->tableName} as node,
+                {$this->tableName} as parent,
+                {$this->tableName} as sub_parent,
                 (
                     SELECT
                         node.id,
                         (COUNT(parent.id) - 1) AS innerDepth
                     FROM
-                        {$tableName} AS node,
-                        {$tableName} AS parent
+                        {$this->tableName} AS node,
+                        {$this->tableName} AS parent
                     WHERE
                         node.left BETWEEN parent.left AND parent.right
                         AND (node.id = :nodeI)
@@ -133,7 +157,8 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
         $rsm = new ResultSetMapping();
         $rsm->addEntityResult($this->getClassName(), 'node');
-        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query = $this->getEntityManager()
+            ->createNativeQuery($sql, $rsm);
         $query->setParameter(':nodeId', $nodeId);
 
         $result = $query->getResult();
@@ -145,60 +170,6 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         return $result;
     }
 
-    // public function deleteNode(int $nodeId) : bool
-    // {
-    //     $info = $this->getById($nodeId);
-
-    //     $dql = "DELETE {$this->getClassName()} node WHERE node.left = :left";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":left", $info->getLeft());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - 1, node.left = node.left - 1 WHERE node.left BETWEEN :left AND :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":left", $info->getLeft());
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - 2 WHERE node.right > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.left = node.left - 2 WHERE node.left > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     return true;
-    // }
-
-    // public function deleteSubtree(int $nodeId) : bool
-    // {
-    //     $info = $this->getById($nodeId);
-    //     $width = $info->getRight() - $info->getLeft() + 1;
-
-    //     $dql = "DELETE {$this->getClassName()} node WHERE node.left BETWEEN :left AND :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":left", $info->getLeft());
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - :widht WHERE node.right > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":width", $width);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     $dql = "UPDATE {$this->getClassName()} node SET node.left = node.left - :widht WHERE node.left > :right";
-    //     $query = $this->getEntityManager()->createQuery($dql);
-    //     $query->setParameter(":width", $width);
-    //     $query->setParameter(":right", $info->getRight());
-    //     $query->execute();
-
-    //     return true;
-    // }
-
     public function deletePermissions(Role $role): Role
     {
         $role->setPermissions(null);
@@ -209,30 +180,31 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
     public function hasPermission(int $roleId, int $permissionId): bool
     {
-        $pdo = $this->getEntityManager()->getConnection();
+        $pdo = $this->getEntityManager()
+            ->getConnection();
 
         $sql = "
             SELECT
                 COUNT(*) AS result
                 FROM role_permission
-                INNER JOIN permission ON permission.id = role_permission.permission_id
-                INNER JOIN role ON role.id = role_permission.role_id
+                INNER JOIN {$this->permissionTableName} AS permission ON permission.id = role_permission.permission_id
+                INNER JOIN {$this->tableName} AS role ON role.id = role_permission.role_id
             WHERE
-                role.`left` BETWEEN
-                    (SELECT `left` FROM role WHERE ID = :roleId)
+                role.tree_left BETWEEN
+                    (SELECT tree_left FROM {$this->tableName} WHERE ID = :roleId)
                     AND
-                    (SELECT `right` FROM role WHERE ID = :roleId)
+                    (SELECT tree_right FROM {$this->tableName} WHERE ID = :roleId)
                 AND
                     permission.id IN (
                         SELECT
                             parent.id
                         FROM
-                            permission AS node,
-                            permission AS parent
+                            {$this->permissionTableName} AS node,
+                            {$this->permissionTableName} AS parent
                         WHERE
-                            node.`left` BETWEEN parent.`left` AND parent.`right`
+                            node.tree_left BETWEEN parent.tree_left AND parent.tree_right
                             AND node.ID= :permissionId
-                        ORDER BY parent.`left`
+                        ORDER BY parent.tree_left
                     )
         ";
         $query = $pdo->prepare($sql);
@@ -250,14 +222,18 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
     public function hasRole(int $roleId, mixed $userId): bool
     {
-        $pdo = $this->getEntityManager()->getConnection();
+        $pdo = $this->getEntityManager()
+            ->getConnection();
+
         $sql = "
             SELECT
                 COUNT(*) as result
             FROM
                 user_role
-            INNER JOIN role AS TRdirect ON (TRdirect.id=user_role.role_id)
-            INNER JOIN role AS TR ON (TR.`left` BETWEEN TRdirect.`left` AND TRdirect.`right`)
+            INNER JOIN
+                {$this->tableName} AS TRdirect ON (TRdirect.id=user_role.role_id)
+            INNER JOIN
+                {$this->tableName} AS TR ON (TR.tree_left BETWEEN TRdirect.tree_left AND TRdirect.tree_right)
             WHERE
                 user_role.user_id = :userId AND TR.ID = :roleId
         ";
@@ -273,8 +249,11 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
         return $row['result'] >= 1;
     }
 
-    public function addNode(string $title, string $description, int $parentId = NodeManagerInterface::ROOT_ID): Role
+    public function addNode(string $code, string $description, int $parentId = NodeManagerInterface::ROOT_ID): RoleInterface
     {
-        return $this->updateForAdd($parentId, Role::class, $title, $description);
+        /** @var RoleInterface $node */
+        $node = $this->updateForAdd($parentId, $this->getClassName(), $code, $description);
+
+        return $node;
     }
 }

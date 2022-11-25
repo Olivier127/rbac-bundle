@@ -3,12 +3,18 @@
 namespace PhpRbacBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\MappedSuperclass]
 #[ORM\UniqueConstraint('unique_code', ['code', 'parent_id'])]
 #[ORM\Index(name:"permission_idx", columns: ["code", "tree_left", "tree_right"])]
 abstract class Node implements NodeInterface
 {
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    protected ?int $id;
+
     #[ORM\Column(type: 'string', length: 255)]
     protected ?string $code;
 
@@ -20,6 +26,11 @@ abstract class Node implements NodeInterface
 
     #[ORM\Column(name:'tree_right', type: 'integer')]
     protected ?int $right;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 
     public function getDescription(): string
     {
@@ -64,12 +75,13 @@ abstract class Node implements NodeInterface
 
     public function setCode(string $code): static
     {
-        $this->code = $code;
+        $slugger = new AsciiSlugger();
+        $this->code = strtolower($slugger->slug($code));
 
         return $this;
     }
 
-    public function __toString() : string
+    public function __toString(): string
     {
         return $this->getCode();
     }
@@ -85,5 +97,4 @@ abstract class Node implements NodeInterface
 
         return $this;
     }
-
 }

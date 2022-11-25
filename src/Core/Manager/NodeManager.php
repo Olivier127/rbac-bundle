@@ -19,14 +19,14 @@ abstract class NodeManager implements NodeManagerInterface
         return self::ROOT_ID;
     }
 
-    public function add(string $title, string $description, int $parentId = self::ROOT_ID): NodeInterface
+    public function add(string $code, string $description, int $parentId = self::ROOT_ID): NodeInterface
     {
         try {
             $parentPath = $parentId == self::ROOT_ID ? "" : $this->getPath($parentId);
-            $id = $this->getPathId($parentPath . "/" . $title);
+            $id = $this->getPathId($parentPath . "/" . $code);
             return $this->getNode($id);
         } catch (RbacException) {
-            return $this->repository->addNode($title, $description, $parentId);
+            return $this->repository->addNode($code, $description, $parentId);
         }
     }
 
@@ -76,10 +76,10 @@ abstract class NodeManager implements NodeManagerInterface
         return $this->repository->getById($nodeId);
     }
 
-    public function updateNode(int $nodeId, string $title, string $description): NodeInterface
+    public function updateNode(int $nodeId, string $code, string $description): NodeInterface
     {
         $node = $this->getNode($nodeId);
-        $node->setTitle($title);
+        $node->setCode($code);
         $node->setDescription($description);
 
         $this->repository->add($node, true);
@@ -96,7 +96,7 @@ abstract class NodeManager implements NodeManagerInterface
         }
         foreach ($nodes as $node) {
             if ($node->getId() != self::ROOT_ID) {
-                $path .= "/" . $node->getTitle();
+                $path .= "/" . $node->getCode();
             }
         }
 

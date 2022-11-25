@@ -2,12 +2,13 @@
 
 namespace PhpRbacBundle\DependencyInjection;
 
-use PhpRbacBundle\Command\SecurityInstallRbacCommand;
-use PhpRbacBundle\Core\PermissionManagerInterface;
 use PhpRbacBundle\Core\RbacInterface;
-use PhpRbacBundle\Core\RoleManagerInterface;
-use PhpRbacBundle\EventSubscriber\AccessControlDriver;
 use Symfony\Component\Config\FileLocator;
+use PhpRbacBundle\Core\RoleManagerInterface;
+use PhpRbacBundle\Core\PermissionManagerInterface;
+use PhpRbacBundle\Entity\PermissionInterface;
+use PhpRbacBundle\Entity\RoleInterface;
+use PhpRbacBundle\EventSubscriber\AccessControlDriver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -23,17 +24,13 @@ class PhpRbacExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../../config'));
-        $loader->load('services.yml');
-
-        $container->registerForAutoconfiguration(PermissionManagerInterface::class)
-            ->setPublic(true);
-        $container->registerForAutoconfiguration(RoleManagerInterface::class)
-            ->setPublic(true);
-        $container->registerForAutoconfiguration(RbacInterface::class)
-            ->setPublic(true);
+        $loader->load('services.yaml');
 
         $definition = $container->getDefinition(AccessControlDriver::class);
         $definition->addMethodCall('load', [$config]);
+
+        $container->setParameter('php_rbac.resolve_target_entities.permission', $config['resolve_target_entities']['permission']);
+        $container->setParameter('php_rbac.resolve_target_entities.role', $config['resolve_target_entities']['role']);
     }
 
     public function getAlias(): string
