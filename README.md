@@ -282,27 +282,27 @@ security:
 
   The install command sets the root node role and permission and associates them.
   ```shell
-    security:rbac:install                      first set of data for rbac installation
+    security:rbac:install
   ```
 
   Add permission into the rbac permissions tree
   ```shell
-  security:rbac:permission:add               Add permission to RBAC system
+  security:rbac:permission:add
   ```
 
   Add permission into the rbac roles tree
   ```shell
-  security:rbac:role:add                     Add role to RBAC system
+  security:rbac:role:add
   ```
 
   Assign a permission to a role
   ```shell
-  security:rbac:role:assign-permission       Assign a permission to a role
+  security:rbac:role:assign-permission
   ```
 
   Assign a role to a user
   ```shell
-  security:rbac:user:assign-role             Assign roles to a user
+  security:rbac:user:assign-role
   ```
 
   Theses commandes are interactives.
