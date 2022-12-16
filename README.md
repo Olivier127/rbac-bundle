@@ -268,7 +268,7 @@ example:
 
 You need to set the security access control to be unanimous (all the voter must be ok)
 
-add this lines to `config/package/security.yaml`</pre>
+add this lines to `config/packages/security.yaml`</pre>
 
 ```yaml
 security:
