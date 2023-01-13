@@ -9,7 +9,7 @@ interface UserManagerInterface
     /**
      * Test the role to a user
      *
-     * @param string|integer $role   Id, path or title of the role to test
+     * @param string|integer $role   Id, path or code of the role to test
      * @param mixed          $userId
      *
      * @throws RbacUserNotProvidedException
