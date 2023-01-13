@@ -10,7 +10,7 @@ interface RbacInterface
     /**
      * Checks whether a user has a permission or not.
      *
-     * @param string|int|PermissionInterface $permission you can provide a path like /some/permission, a title,
+     * @param string|int|PermissionInterface $permission you can provide a path like /some/permission, a code,
      *                                                   the permission ID or the object PermissionInterface
      * @param mixed                          $userId
      *
@@ -23,7 +23,7 @@ interface RbacInterface
 /**
      * Test the role to a user
      *
-     * @param string|int|RoleInterface $role   you can provide a path like /some/role, a title,
+     * @param string|int|RoleInterface $role   you can provide a path like /some/role, a code,
      *                                         the role Id or the object RoleInterface
      * @param mixed                    $userId
      *
