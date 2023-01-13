@@ -23,13 +23,13 @@ interface NodeManagerInterface
     /**
      * Adds a new role or permission
      *
-     * @param string  $title
+     * @param string  $code
      * @param string  $description
      * @param int     $parentId     default = 1
      *
      * @return NodeInterface
      */
-    public function add(string $title, string $description, int $parentId = self::ROOT_ID): NodeInterface;
+    public function add(string $code, string $description, int $parentId = self::ROOT_ID): NodeInterface;
 
     /**
      * Adds a new path of roles or permissions
@@ -59,13 +59,13 @@ interface NodeManagerInterface
      * Update Node
      *
      * @param int    $nodeId
-     * @param string $title       New title
+     * @param string $code       New code
      * @param string $description New description
      *
      * @throws RbacException
      * @return NodeInterface The updated Node
      */
-    public function updateNode(int $nodeId, string $title, string $description): NodeInterface;
+    public function updateNode(int $nodeId, string $code, string $description): NodeInterface;
 
     /**
      * Get the child of the node
