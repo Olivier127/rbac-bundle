@@ -143,6 +143,7 @@ trait NodeEntityTrait
 
         $node = new $nodeClass();
         $node->setCode($code)
+            ->setParent($parent)
             ->setDescription($description)
             ->setLeft($parent->getRight())
             ->setRight($parent->getRight() + 1);
