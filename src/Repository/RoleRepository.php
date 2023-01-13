@@ -4,7 +4,6 @@ namespace PhpRbacBundle\Repository;
 
 use Doctrine\ORM\ORMException;
 use PhpRbacBundle\Entity\Role;
-use PhpRbacBundle\Entity\NodeInterface;
 use PhpRbacBundle\Entity\RoleInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\OptimisticLockException;
@@ -99,11 +98,11 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
             FROM
                 {$this->getClassName()} parent
             JOIN
-                {$this->getClassName()} node WITH node.left BETWEEN parent.left AND parent.right
+                {$this->getClassName()} node WITH node.tree_left BETWEEN parent.tree_left AND parent.tree_right
             WHERE
                 node.id = :nodeId
             ORDER BY
-                parent.left
+                parent.tree_left
         ";
 
         $query = $this->getEntityManager()
@@ -136,23 +135,23 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
                         {$this->tableName} AS node,
                         {$this->tableName} AS parent
                     WHERE
-                        node.left BETWEEN parent.left AND parent.right
+                        node.tree_left BETWEEN parent.tree_left AND parent.tree_right
                         AND (node.id = :nodeI)
                     GROUP BY
                         node.id
                     ORDER BY
-                        node.left
+                        node.tree_left
                 ) AS sub_tree
             WHERE
-                node.left BETWEEN parent.left AND parent.right
-                AND node.left BETWEEN sub_parent.left AND sub_parent.right
+                node.tree_left BETWEEN parent.tree_left AND parent.tree_right
+                AND node.tree_left BETWEEN sub_parent.tree_left AND sub_parent.tree_right
                 AND sub_parent.id = sub_tree.id
             GROUP BY
                 node.id
             HAVING
                 depth = 1
             ORDER BY
-                node.left
+                node.tree_left
         ";
 
         $rsm = new ResultSetMapping();
