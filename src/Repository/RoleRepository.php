@@ -92,29 +92,7 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
     public function getPath(int $nodeId): array
     {
-        $dql = "
-            SELECT
-                parent
-            FROM
-                {$this->getClassName()} parent
-            JOIN
-                {$this->getClassName()} node WITH node.tree_left BETWEEN parent.tree_left AND parent.tree_right
-            WHERE
-                node.id = :nodeId
-            ORDER BY
-                parent.tree_left
-        ";
-
-        $query = $this->getEntityManager()
-            ->createQuery($dql);
-        $query->setParameter(':nodeId', $nodeId);
-        $result = $query->getResult();
-
-        if (empty($result)) {
-            throw new RbacRoleNotFoundException();
-        }
-
-        return $result;
+        return $this->getPathFunc($nodeId, RbacRoleNotFoundException::class);
     }
 
     public function getChildren(int $nodeId): array

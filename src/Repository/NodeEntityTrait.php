@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Repository;
 
+use Exception;
 use PhpRbacBundle\Entity\Node;
 use PhpRbacBundle\Exception\RbacException;
 use PhpRbacBundle\Core\Manager\NodeManagerInterface;
@@ -153,5 +154,32 @@ trait NodeEntityTrait
         $entityManager->refresh($parent);
 
         return $node;
+    }
+
+    private function getPathFunc(int $nodeId, string $rbacExceptionClass): array
+    {
+        $dql = "
+            SELECT
+                parent
+            FROM
+                {$this->getClassName()} parent
+            JOIN
+                {$this->getClassName()} node WITH node.left BETWEEN parent.left AND parent.right
+            WHERE
+                node.id = :nodeId
+            ORDER BY
+                parent.left
+        ";
+
+        $query = $this->getEntityManager()
+            ->createQuery($dql);
+        $query->setParameter(':nodeId', $nodeId);
+        $result = $query->getResult();
+
+        if (empty($result)) {
+            throw new $rbacExceptionClass();
+        }
+
+        return $result;
     }
 }
