@@ -306,3 +306,18 @@ security:
   ```
 
   Theses commandes are interactives.
+  
+  ## Twig
+  
+  test if user has a role
+  ```twig
+  {% if hasRole('/the/role') %}
+  ...
+  {% endif %}
+  
+  test if user has a permission
+  ```twig
+  {% if hasPermission('/the/permission') %}
+  ...
+  {% endif %}
+  ```
