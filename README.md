@@ -314,6 +314,7 @@ security:
   {% if hasRole('/the/role') %}
   ...
   {% endif %}
+  ```
   
   test if user has a permission
   ```twig
