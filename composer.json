@@ -1,5 +1,5 @@
 {
-    "name": "olivier127/rbac-bundle",
+    "name": "triforce-technologies/symfony-rbac-bundle",
     "type": "symfony-bundle",
     "description": "Symfony PhpRabcBundle allow to use RBAC control access for symfony project",
     "keywords": [
