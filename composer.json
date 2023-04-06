@@ -1,6 +1,7 @@
 {
     "name": "triforce-technologies/symfony-rbac-bundle",
     "type": "symfony-bundle",
+    "version": "1.0.0",
     "description": "Symfony PhpRabcBundle allow to use RBAC control access for symfony project",
     "keywords": [
         "RBAC", "Security", "Access-Control", "Role", "phprbac.net", "owasp", "symfony", "bundle", "security"
