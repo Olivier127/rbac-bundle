@@ -13,13 +13,13 @@
         }
     ],
     "require": {
-        "php": "^8.0",
-        "symfony/framework-bundle": "^6.0",
-        "webmozart/assert": "^1.10",
-        "doctrine/annotations": "^1.0",
-        "doctrine/doctrine-bundle": "^2.5",
+        "php": ">=8.2.1",
+        "symfony/framework-bundle": "6.2.*",
+        "webmozart/assert": "^1.11",
+        "doctrine/annotations": "^2.0",
+        "doctrine/doctrine-bundle": "^2.9",
         "doctrine/doctrine-migrations-bundle": "^3.2",
-        "doctrine/orm": "^2.11"
+        "doctrine/orm": "^2.14"
     },
     "autoload": {
         "psr-4": { "PhpRbacBundle\\": "src/" }
