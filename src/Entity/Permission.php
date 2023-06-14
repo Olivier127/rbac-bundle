@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\MappedSuperclass]
 abstract class Permission extends Node implements PermissionInterface
 {
-    #[ORM\OneToOne(targetEntity: PermissionInterface::class)]
+    #[ORM\ManyToOne(targetEntity: PermissionInterface::class)]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true, onDelete:"cascade")]
     protected ?PermissionInterface $parent = null;
 

@@ -15,6 +15,7 @@ PhpRBACBundle is symfony 6 bundle with full access control library for PHP. It p
 * [RBAC for controller](#rbac-for-controller)
 * [Voter based RBAC](#voter-based-rbac)
 * [Symfony CLI commands](#symfony-cli-commands)
+* [Twig functions](#twig)
 
 ## How it works ?
 
@@ -306,3 +307,19 @@ security:
   ```
 
   Theses commandes are interactives.
+  
+  ## Twig
+  
+  test if user has a role
+  ```twig
+  {% if hasRole('/the/role') %}
+  ...
+  {% endif %}
+  ```
+  
+  test if user has a permission
+  ```twig
+  {% if hasPermission('/the/permission') %}
+  ...
+  {% endif %}
+  ```

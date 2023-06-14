@@ -14,7 +14,7 @@ abstract class Role extends Node implements RoleInterface
     #[ORM\InverseJoinColumn(name: "permission_id", referencedColumnName: "id", onDelete: "cascade")]
     private Collection $permissions;
 
-    #[ORM\OneToOne(targetEntity: RoleInterface::class)]
+    #[ORM\ManyToOne(targetEntity: RoleInterface::class)]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', nullable: true, onDelete:"cascade")]
     protected ?RoleInterface $parent = null;
 
