@@ -85,16 +85,4 @@ abstract class Node implements NodeInterface
     {
         return $this->getCode();
     }
-
-    public function getLevel(): ?int
-    {
-        return $this->level;
-    }
-
-    public function setLevel(int $level): static
-    {
-        $this->level = $level;
-
-        return $this;
-    }
 }
