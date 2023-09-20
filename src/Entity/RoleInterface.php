@@ -12,7 +12,7 @@ interface RoleInterface extends NodeInterface
 
     public function removePermission(PermissionInterface $permission): RoleInterface;
 
-    public function getParent(): RoleInterface;
+    public function getParent(): ?RoleInterface;
 
-    public function setParent(RoleInterface $parent): RoleInterface;
+    public function setParent(?RoleInterface $parent): RoleInterface;
 }
