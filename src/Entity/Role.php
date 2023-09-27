@@ -56,12 +56,12 @@ abstract class Role extends Node implements RoleInterface
         return $this;
     }
 
-    public function getParent(): RoleInterface
+    public function getParent(): ?RoleInterface
     {
         return $this->parent;
     }
 
-    public function setParent(RoleInterface $parent): RoleInterface
+    public function setParent(?RoleInterface $parent): RoleInterface
     {
         $this->parent = $parent;
 

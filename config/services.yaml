@@ -14,10 +14,6 @@ services:
             - '../src/Exception/'
             - '../src/Respository/'
 
-    PhpRbacBundle\EventSubscriber\AccessControlDriver:
-      tags:
-        - { name: kernel.event_listener, event: onKernelController }
-
     PhpRbacBundle\Repository\PermissionRepository:
         arguments:
             $entityClass: '%php_rbac.resolve_target_entities.permission%'
