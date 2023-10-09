@@ -2,12 +2,7 @@
 
 namespace PhpRbacBundle\DependencyInjection;
 
-use PhpRbacBundle\Core\RbacInterface;
 use Symfony\Component\Config\FileLocator;
-use PhpRbacBundle\Core\RoleManagerInterface;
-use PhpRbacBundle\Core\PermissionManagerInterface;
-use PhpRbacBundle\Entity\PermissionInterface;
-use PhpRbacBundle\Entity\RoleInterface;
 use PhpRbacBundle\EventSubscriber\AccessControlDriver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
@@ -31,6 +26,7 @@ class PhpRbacExtension extends Extension
 
         $container->setParameter('php_rbac.resolve_target_entities.permission', $config['resolve_target_entities']['permission']);
         $container->setParameter('php_rbac.resolve_target_entities.role', $config['resolve_target_entities']['role']);
+        $container->setParameter('php_rbac.user_repository_class', $config['user_repository_class']);
     }
 
     public function getAlias(): string

@@ -2,14 +2,9 @@
 
 namespace PhpRbacBundle\Command;
 
-use App\Repository\UserRepository;
-use PhpRbacBundle\Core\Manager\RoleManager;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use PhpRbacBundle\Repository\PermissionRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,10 +18,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class RbacAssignUserRoleCommand extends Command
 {
     public function __construct(
-        private PermissionRepository $permissionRepository,
         private RoleRepository $roleRepository,
-        private RoleManager $roleManager,
-        private UserRepository $userRepository
+        private $userRepository,
     ) {
         parent::__construct();
     }
@@ -36,7 +29,7 @@ class RbacAssignUserRoleCommand extends Command
         $this
             ->setName('security:rbac:user:assign-role')
             ->setDescription('Assign roles to a user')
-            ->addArgument('userId', InputArgument::REQUIRED, "The user Id");
+            ->addArgument('userId', InputArgument::REQUIRED, 'The user Id');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -44,12 +37,23 @@ class RbacAssignUserRoleCommand extends Command
         $helper = $this->getHelper('question');
 
         $rolesTmp = $this->roleRepository->findAll();
+
+        if (empty($rolesTmp)) {
+            $io = new SymfonyStyle($input, $output);
+            $io->error(
+                'You should install first the root nodes for both roles and permissions. '.
+                'Use `php bin/console security:rbac:install` command in order to do that.'
+            );
+
+            return Command::INVALID;
+        }
+
         $roles = [];
         foreach ($rolesTmp as $role) {
             $pathNodes = $this->roleRepository->getPath($role->getId());
-            $path = "/" . implode('/', $pathNodes);
-            $path = str_replace("/root", "/", $path);
-            $path = str_replace("//", "/", $path);
+            $path = '/'.implode('/', $pathNodes);
+            $path = str_replace('/root', '/', $path);
+            $path = str_replace('//', '/', $path);
             $roles[$path] = $role;
         }
         ksort($roles);

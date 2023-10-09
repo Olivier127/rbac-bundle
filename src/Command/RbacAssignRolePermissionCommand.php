@@ -5,12 +5,9 @@ namespace PhpRbacBundle\Command;
 use PhpRbacBundle\Core\Manager\RoleManager;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use PhpRbacBundle\Repository\PermissionRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -41,12 +38,23 @@ class RbacAssignRolePermissionCommand extends Command
         $helper = $this->getHelper('question');
 
         $rolesTmp = $this->roleRepository->findAll();
+
+        if (empty($rolesTmp)) {
+            $io = new SymfonyStyle($input, $output);
+            $io->error(
+                'You should install first the root nodes for both roles and permissions. '.
+                'Use `php bin/console security:rbac:install` command to do that.'
+            );
+
+            return Command::INVALID;
+        }
+
         $roles = [];
         foreach ($rolesTmp as $role) {
             $pathNodes = $this->roleRepository->getPath($role->getId());
-            $path = "/" . implode('/', $pathNodes);
-            $path = str_replace("/root", "/", $path);
-            $path = str_replace("//", "/", $path);
+            $path = '/'.implode('/', $pathNodes);
+            $path = str_replace('/root', '/', $path);
+            $path = str_replace('//', '/', $path);
             $roles[$path] = $role;
         }
         ksort($roles);
@@ -55,16 +63,20 @@ class RbacAssignRolePermissionCommand extends Command
         $permissions = [];
         foreach ($permissionsTmp as $permission) {
             $pathNodes = $this->permissionRepository->getPath($permission->getId());
-            $path = "/" . implode('/', $pathNodes);
-            $path = str_replace("/root", "/", $path);
-            $path = str_replace("//", "/", $path);
+            $path = '/'.implode('/', $pathNodes);
+            $path = str_replace('/root', '/', $path);
+            $path = str_replace('//', '/', $path);
             $permissions[$path] = $permission;
         }
         ksort($permissions);
 
         $question = new ChoiceQuestion('Choice the role : ', array_keys($roles), 0);
         $rolePath = $helper->ask($input, $output, $question);
-        $question = new ChoiceQuestion('Choice the permission (multiple separate by comma): ', array_keys($permissions), 0);
+        $question = new ChoiceQuestion(
+            'Choice the permission (multiple separate by comma): ',
+            array_keys($permissions),
+            0
+        );
         $question->setMultiselect(true);
         $permissionPaths = $helper->ask($input, $output, $question);
         foreach ($permissionPaths as $permissionPath) {
