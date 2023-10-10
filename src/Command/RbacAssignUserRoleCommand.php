@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Command;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -19,7 +20,7 @@ class RbacAssignUserRoleCommand extends Command
 {
     public function __construct(
         private RoleRepository $roleRepository,
-        private $userRepository,
+        private ServiceEntityRepositoryInterface $userRepository,
     ) {
         parent::__construct();
     }
