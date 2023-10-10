@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\DependencyInjection;
 
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -22,18 +23,18 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->scalarNode('user_repository_class')
-                    ->info('User Repository class.')
-                    ->defaultValue('App\Repository\UserRepository')
-                ->end()
                 ->arrayNode('resolve_target_entities')
                     ->children()
-                        ->scalarNode('permission')
-                            ->info('Set the class which implements PermissionInterface')
+                        ->scalarNode('user')
+                            ->info('Set the class which implements UserInterface')
                             ->cannotBeEmpty()
                         ->end()
                         ->scalarNode('role')
                             ->info('Set the class which implements RoleInterface')
+                            ->cannotBeEmpty()
+                        ->end()
+                        ->scalarNode('permission')
+                            ->info('Set the class which implements PermissionInterface')
                             ->cannotBeEmpty()
                         ->end()
                     ->end()

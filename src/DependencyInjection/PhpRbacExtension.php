@@ -24,9 +24,9 @@ class PhpRbacExtension extends Extension
         $definition = $container->getDefinition(AccessControlDriver::class);
         $definition->addMethodCall('load', [$config]);
 
-        $container->setParameter('php_rbac.resolve_target_entities.permission', $config['resolve_target_entities']['permission']);
+        $container->setParameter('php_rbac.resolve_target_entities.user', $config['resolve_target_entities']['user']);
         $container->setParameter('php_rbac.resolve_target_entities.role', $config['resolve_target_entities']['role']);
-        $container->setParameter('php_rbac.user_repository_class', $config['user_repository_class']);
+        $container->setParameter('php_rbac.resolve_target_entities.permission', $config['resolve_target_entities']['permission']);
     }
 
     public function getAlias(): string

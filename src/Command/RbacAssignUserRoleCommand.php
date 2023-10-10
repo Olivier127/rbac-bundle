@@ -2,7 +2,7 @@
 
 namespace PhpRbacBundle\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -20,7 +20,8 @@ class RbacAssignUserRoleCommand extends Command
 {
     public function __construct(
         private RoleRepository $roleRepository,
-        private ServiceEntityRepositoryInterface $userRepository,
+        private EntityManagerInterface $entityManager,
+        private string $userEntity,
     ) {
         parent::__construct();
     }
@@ -60,8 +61,9 @@ class RbacAssignUserRoleCommand extends Command
         ksort($roles);
 
         $userId = $input->getArgument('userId');
+        $userRepository = $this->entityManager->getRepository($this->userEntity);
 
-        $user = $this->userRepository->find($userId);
+        $user = $userRepository->find($userId);
 
         $question = new ChoiceQuestion('Choice the roles (multiple separate by comma): ', array_keys($roles), 0);
         $question->setMultiselect(true);
@@ -70,7 +72,7 @@ class RbacAssignUserRoleCommand extends Command
             $role = $roles[$rolePath];
             $user->addRbacRole($role);
         }
-        $this->userRepository->add($user, true);
+        $userRepository->add($user, true);
 
         return Command::SUCCESS;
     }
