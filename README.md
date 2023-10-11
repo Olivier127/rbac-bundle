@@ -120,6 +120,7 @@ php_rbac:
   no_authentication_section:
     default: deny
   resolve_target_entities:
+    user: App\Entity\User
     role: App\Entity\Role
     permission: App\Entity\Permission
 ```

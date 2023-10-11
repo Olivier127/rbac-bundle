@@ -2,14 +2,10 @@
 
 namespace PhpRbacBundle\Command;
 
-use App\Repository\UserRepository;
-use PhpRbacBundle\Core\Manager\RoleManager;
+use Doctrine\ORM\EntityManagerInterface;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use PhpRbacBundle\Repository\PermissionRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,10 +19,9 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class RbacAssignUserRoleCommand extends Command
 {
     public function __construct(
-        private PermissionRepository $permissionRepository,
         private RoleRepository $roleRepository,
-        private RoleManager $roleManager,
-        private UserRepository $userRepository
+        private EntityManagerInterface $entityManager,
+        private string $userEntity,
     ) {
         parent::__construct();
     }
@@ -36,7 +31,7 @@ class RbacAssignUserRoleCommand extends Command
         $this
             ->setName('security:rbac:user:assign-role')
             ->setDescription('Assign roles to a user')
-            ->addArgument('userId', InputArgument::REQUIRED, "The user Id");
+            ->addArgument('userId', InputArgument::REQUIRED, 'The user Id');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -44,19 +39,31 @@ class RbacAssignUserRoleCommand extends Command
         $helper = $this->getHelper('question');
 
         $rolesTmp = $this->roleRepository->findAll();
+
+        if (empty($rolesTmp)) {
+            $io = new SymfonyStyle($input, $output);
+            $io->error(
+                'You should install first the root nodes for both roles and permissions. '.
+                'Use `php bin/console security:rbac:install` command in order to do that.'
+            );
+
+            return Command::INVALID;
+        }
+
         $roles = [];
         foreach ($rolesTmp as $role) {
             $pathNodes = $this->roleRepository->getPath($role->getId());
-            $path = "/" . implode('/', $pathNodes);
-            $path = str_replace("/root", "/", $path);
-            $path = str_replace("//", "/", $path);
+            $path = '/'.implode('/', $pathNodes);
+            $path = str_replace('/root', '/', $path);
+            $path = str_replace('//', '/', $path);
             $roles[$path] = $role;
         }
         ksort($roles);
 
         $userId = $input->getArgument('userId');
+        $userRepository = $this->entityManager->getRepository($this->userEntity);
 
-        $user = $this->userRepository->find($userId);
+        $user = $userRepository->find($userId);
 
         $question = new ChoiceQuestion('Choice the roles (multiple separate by comma): ', array_keys($roles), 0);
         $question->setMultiselect(true);
@@ -65,7 +72,7 @@ class RbacAssignUserRoleCommand extends Command
             $role = $roles[$rolePath];
             $user->addRbacRole($role);
         }
-        $this->userRepository->add($user, true);
+        $userRepository->add($user, true);
 
         return Command::SUCCESS;
     }

@@ -4,12 +4,10 @@ namespace PhpRbacBundle\Command;
 
 use PhpRbacBundle\Core\Manager\PermissionManager;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use PhpRbacBundle\Repository\PermissionRepository;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -39,12 +37,23 @@ class RbacAddPermissionCommand extends Command
         $helper = $this->getHelper('question');
 
         $permissionsTmp = $this->permissionRepository->findAll();
+
+        if (empty($permissionsTmp)) {
+            $io = new SymfonyStyle($input, $output);
+            $io->error(
+                'You should install first the root nodes for both roles and permissions. '.
+                'Use `php bin/console security:rbac:install` command in order to do that.'
+            );
+
+            return Command::INVALID;
+        }
+
         $permissions = [];
         foreach ($permissionsTmp as $permission) {
             $pathNodes = $this->permissionRepository->getPath($permission->getId());
-            $path = "/" . implode('/', $pathNodes);
-            $path = str_replace("/root", "/", $path);
-            $path = str_replace("//", "/", $path);
+            $path = '/'.implode('/', $pathNodes);
+            $path = str_replace('/root', '/', $path);
+            $path = str_replace('//', '/', $path);
             $permissions[$path] = $permission;
         }
         ksort($permissions);
