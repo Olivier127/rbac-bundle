@@ -2,7 +2,6 @@
 
 namespace PhpRbacBundle\Core\Manager;
 
-use Exception;
 use PhpRbacBundle\Entity\NodeInterface;
 use PhpRbacBundle\Exception\RbacException;
 use PhpRbacBundle\Repository\RoleRepository;

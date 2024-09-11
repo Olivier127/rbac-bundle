@@ -11,11 +11,11 @@
 
 namespace PhpRbacBundle\Twig;
 
+use Symfony\Bundle\SecurityBundle\Security;
 use Twig\TwigFunction;
 use PhpRbacBundle\Core\RbacInterface;
 use PhpRbacBundle\Exception\RbacException;
 use Twig\Extension\AbstractExtension;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * SecurityExtension exposes security context features.

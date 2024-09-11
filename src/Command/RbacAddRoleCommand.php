@@ -19,8 +19,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class RbacAddRoleCommand extends Command
 {
     public function __construct(
-        private RoleRepository $roleRepository,
-        private RoleManager $roleManager,
+        private readonly RoleRepository $roleRepository,
+        private readonly RoleManager $roleManager,
     ) {
         parent::__construct();
     }

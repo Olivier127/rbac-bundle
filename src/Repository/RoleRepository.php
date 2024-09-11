@@ -2,7 +2,7 @@
 
 namespace PhpRbacBundle\Repository;
 
-use Doctrine\ORM\ORMException;
+use Doctrine\ORM\Exception\ORMException;
 use PhpRbacBundle\Entity\Role;
 use PhpRbacBundle\Entity\RoleInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
