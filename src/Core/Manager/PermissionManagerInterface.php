@@ -2,7 +2,6 @@
 
 namespace PhpRbacBundle\Core\Manager;
 
-use PhpRbacBundle\Entity\RoleInterface;
 use PhpRbacBundle\Entity\PermissionInterface;
 use PhpRbacBundle\Exception\RbacPermissionNotFoundException;
 

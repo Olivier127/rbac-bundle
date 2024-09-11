@@ -11,8 +11,8 @@ use PhpRbacBundle\Core\Manager\PermissionManagerInterface;
 class Rbac implements RbacInterface
 {
     public function __construct(
-        private PermissionManagerInterface $permissionManager,
-        private RoleManagerInterface $roleManager
+        private readonly PermissionManagerInterface $permissionManager,
+        private readonly RoleManagerInterface $roleManager
     ) {
     }
 

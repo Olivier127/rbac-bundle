@@ -2,7 +2,6 @@
 
 namespace PhpRbacBundle\Repository;
 
-use Exception;
 use PhpRbacBundle\Entity\Node;
 use PhpRbacBundle\Exception\RbacException;
 use PhpRbacBundle\Core\Manager\NodeManagerInterface;

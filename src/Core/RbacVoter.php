@@ -3,14 +3,13 @@
 namespace PhpRbacBundle\Core;
 
 use Exception;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class RbacVoter extends Voter
 {
-    public function __construct(private Rbac $rbacManager) { }
+    public function __construct(private readonly Rbac $rbacManager) { }
 
     protected function supports(string $attribute, mixed $subject): bool
     {

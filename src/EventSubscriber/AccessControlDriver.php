@@ -5,24 +5,22 @@ namespace PhpRbacBundle\EventSubscriber;
 use ReflectionMethod;
 use Psr\Log\LoggerInterface;
 use PhpRbacBundle\Core\RbacInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\KernelEvents;
 use PhpRbacBundle\Attribute\AccessControl\HasRole;
 use PhpRbacBundle\Attribute\AccessControl\IsGranted;
 use PhpRbacBundle\Exception\RbacException;
-use Reflection;
 use ReflectionClass;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Core\Security;
 
 class AccessControlDriver implements EventSubscriberInterface
 {
     public function __construct(
         private RbacInterface $accessControl,
-        private LoggerInterface $accessControlLogger,
-        private Security $security
+        private readonly LoggerInterface $accessControlLogger,
+        private readonly Security $security
     ) {
     }
 

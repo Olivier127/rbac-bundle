@@ -19,9 +19,9 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class RbacAssignUserRoleCommand extends Command
 {
     public function __construct(
-        private RoleRepository $roleRepository,
-        private EntityManagerInterface $entityManager,
-        private string $userEntity,
+        private readonly RoleRepository $roleRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly string $userEntity,
     ) {
         parent::__construct();
     }

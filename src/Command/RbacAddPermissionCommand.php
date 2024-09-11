@@ -19,8 +19,8 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 class RbacAddPermissionCommand extends Command
 {
     public function __construct(
-        private PermissionRepository $permissionRepository,
-        private PermissionManager $permissionManager,
+        private readonly PermissionRepository $permissionRepository,
+        private readonly PermissionManager $permissionManager,
     ) {
         parent::__construct();
     }
