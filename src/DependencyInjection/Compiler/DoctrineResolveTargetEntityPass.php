@@ -2,10 +2,11 @@
 
 namespace PhpRbacBundle\DependencyInjection\Compiler;
 
-use PhpRbacBundle\Entity\PermissionInterface;
+use Doctrine\ORM\Events;
 use PhpRbacBundle\Entity\RoleInterface;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use PhpRbacBundle\Entity\PermissionInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 class DoctrineResolveTargetEntityPass implements CompilerPassInterface
 {
