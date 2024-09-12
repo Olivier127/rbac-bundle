@@ -11,18 +11,20 @@ class DoctrineResolveTargetEntityPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $definition = $container->findDefinition('doctrine.orm.listeners.resolve_target_entity');
+        $resolveTargetEntityListener = $container->findDefinition('doctrine.orm.listeners.resolve_target_entity');
 
-        $definition->addMethodCall(
+        $resolveTargetEntityListener->addMethodCall(
             'addResolveTargetEntity',
             [PermissionInterface::class, $container->getParameter('php_rbac.resolve_target_entities.permission'), []]
         );
-        $definition->addMethodCall(
+        $resolveTargetEntityListener->addMethodCall(
             'addResolveTargetEntity',
             [RoleInterface::class, $container->getParameter('php_rbac.resolve_target_entities.role'), []]
         );
 
-        $definition->addTag('doctrine.event_subscriber');
+        $resolveTargetEntityListener
+            ->addTag('doctrine.event_listener', ['event' => Events::loadClassMetadata])
+            ->addTag('doctrine.event_listener', ['event' => Events::onClassMetadataNotFound]);
 
         $definitionCommand = $container->findDefinition('PhpRbacBundle\Command\RbacAssignUserRoleCommand');
         $definitionCommand->setArgument(
