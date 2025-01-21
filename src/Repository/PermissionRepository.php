@@ -118,7 +118,7 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
                         {$this->tableName} AS parent
                     WHERE
                         node.tree_left BETWEEN parent.tree_left AND parent.tree_right
-                        AND (node.id = :nodeI)
+                        AND (node.id = :nodeId)
                     GROUP BY
                         node.id
                     ORDER BY
