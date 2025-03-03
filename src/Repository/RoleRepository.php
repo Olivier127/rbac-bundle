@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Repository;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Exception\ORMException;
 use PhpRbacBundle\Entity\Role;
 use PhpRbacBundle\Entity\RoleInterface;
@@ -39,13 +40,25 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
     public function initTable()
     {
-        $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE user_role; TRUNCATE role_permission; TRUNCATE {$this->tableName};SET FOREIGN_KEY_CHECKS = 1;";
+        if ($this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            $this->getEntityManager()->getConnection()->executeQuery("SET CONSTRAINTS ALL DEFERRED");
+            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE user_role CASCADE");
+            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE role_permission CASCADE");
+            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE {$this->tableName} CASCADE");
+            $this->getEntityManager()->getConnection()->executeQuery("SET CONSTRAINTS ALL IMMEDIATE");
+        } else {
+            $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE user_role; TRUNCATE role_permission; TRUNCATE {$this->tableName};SET FOREIGN_KEY_CHECKS = 1;";
+            $this->getEntityManager()
+                ->getConnection()
+                ->executeQuery($sql);
+        }
+
+        $sql = "INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1);";
         $this->getEntityManager()
             ->getConnection()
             ->executeQuery($sql);
 
-        $sql = "INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1);";
-        $sql .= "INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1)";
+        $sql = "INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1)";
         $this->getEntityManager()
             ->getConnection()
             ->executeQuery($sql);
