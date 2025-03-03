@@ -22,7 +22,9 @@
         "doctrine/orm": "^3.2",
         "symfony/security-bundle": "~6.0|~7.0",
         "symfony/orm-pack": "^2.4",
-        "symfony/twig-pack": "^1.0",
+        "symfony/twig-pack": "^1.0"
+    },
+    "require-dev": {
         "symfony/dotenv": "~6.0|~7.0"
     },
     "autoload": {
