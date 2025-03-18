@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Repository;
 
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Exception\ORMException;
 use PhpRbacBundle\Entity\Permission;
 use PhpRbacBundle\Entity\RoleInterface;
@@ -40,10 +41,18 @@ class PermissionRepository extends ServiceEntityRepository implements NestedSetI
 
     public function initTable()
     {
-        $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE role_permission; TRUNCATE {$this->tableName}; SET FOREIGN_KEY_CHECKS = 1";
-        $this->getEntityManager()
-            ->getConnection()
-            ->executeQuery($sql);
+        if ($this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            $this->getEntityManager()->getConnection()->executeQuery("SET CONSTRAINTS ALL DEFERRED");
+            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE role_permission CASCADE");
+            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE {$this->tableName} CASCADE");
+            $this->getEntityManager()->getConnection()->executeQuery("SET CONSTRAINTS ALL IMMEDIATE");
+        } else {
+            $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE role_permission; TRUNCATE {$this->tableName}; SET FOREIGN_KEY_CHECKS = 1";
+            $this->getEntityManager()
+                ->getConnection()
+                ->executeQuery($sql);
+        }
+
         $sql = "INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1)";
         $this->getEntityManager()
             ->getConnection()

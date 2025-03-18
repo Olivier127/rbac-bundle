@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
 #[ORM\MappedSuperclass]
-#[ORM\UniqueConstraint('unique_code', ['code', 'parent_id'])]
-#[ORM\Index(name:"permission_idx", columns: ["code", "tree_left", "tree_right"])]
+#[ORM\UniqueConstraint(columns: ['code', 'parent_id'])]
+#[ORM\Index(columns: ["code", "tree_left", "tree_right"])]
 abstract class Node implements NodeInterface
 {
     #[ORM\Id]

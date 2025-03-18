@@ -5,6 +5,7 @@ namespace PhpRbacBundle\Repository;
 use PhpRbacBundle\Entity\Node;
 use PhpRbacBundle\Exception\RbacException;
 use PhpRbacBundle\Core\Manager\NodeManagerInterface;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 
 trait NodeEntityTrait
 {
@@ -81,7 +82,24 @@ trait NodeEntityTrait
         $tableName = $this->getClassMetadata()
             ->getTableName();
         $parts = explode("/", $pathCmpl);
-        $sql = "
+        if ($this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            $sql = "
+            SELECT
+                node.id,
+                string_agg(parent.code, '/' ORDER BY parent.tree_left) as path
+            FROM
+                {$tableName} as parent
+            INNER JOIN
+                {$tableName} as node ON node.tree_left BETWEEN parent.tree_left AND parent.tree_right
+            WHERE
+                node.code = :code
+            GROUP BY
+                node.id
+            HAVING
+                string_agg(parent.code, '/' ORDER BY parent.tree_left) = :path
+                ";
+        } else {
+            $sql = "
             SELECT
                 node.id,
                 GROUP_CONCAT(parent.code ORDER BY parent.tree_left SEPARATOR '/') as path
@@ -96,6 +114,7 @@ trait NodeEntityTrait
             HAVING
                 path = :path
         ";
+        }
 
         $pdo = $this->getEntityManager()
             ->getConnection();
