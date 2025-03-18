@@ -18,7 +18,6 @@
         "webmozart/assert": "^1.10",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.5",
-        "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^3.2",
         "symfony/security-bundle": "~6.0|~7.0",
         "symfony/orm-pack": "^2.4",
