@@ -90,7 +90,7 @@ use PhpRbacBundle\Entity\Role as EntityRole;
 use PhpRbacBundle\Repository\RoleRepository;
 
 #[ORM\Entity(repositoryClass: RoleRepository::class)]
-#[ORM\Table('my_roles')]
+#[ORM\Table('rbac_roles')]
 class Role extends EntityRole
 {
 
@@ -106,7 +106,7 @@ use PhpRbacBundle\Entity\Permission as EntityPermission;
 use PhpRbacBundle\Repository\PermissionRepository;
 
 #[ORM\Entity(repositoryClass: PermissionRepository::class)]
-#[ORM\Table('my_permissions')]
+#[ORM\Table('rbac_permissions')]
 class Permission extends EntityPermission
 {
 
