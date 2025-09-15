@@ -10,10 +10,10 @@ use PhpRbacBundle\Repository\UserRoleRepository;
 #[ORM\Entity(repositoryClass: UserRoleRepository::class)]
 trait UserRoleTrait
 {
-    #[ORM\ManyToMany(targetEntity: RoleInterface::class, cascade:['persist', 'remove', 'refresh'])]
+    #[ORM\ManyToMany(targetEntity: RoleInterface::class)]
     #[ORM\JoinTable(name: "user_role")]
-    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id", onDelete: "cascade")]
-    #[ORM\InverseJoinColumn(name: "role_id", referencedColumnName: "id", onDelete: "cascade")]
+    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
+    #[ORM\InverseJoinColumn(name: "role_id", referencedColumnName: "id")]
     private Collection $rbacRoles;
 
     public function __construct()
