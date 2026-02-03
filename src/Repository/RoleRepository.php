@@ -101,43 +101,95 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
 
     public function getChildren(int $nodeId): array
     {
-        $sql = "
-            SELECT
-                node.*,
-                (COUNT(parent.id)-1 - (sub_tree.innerDepth )) AS depth
-            FROM
-                {$this->tableName} as node,
-                {$this->tableName} as parent,
-                {$this->tableName} as sub_parent,
-                (
-                    SELECT
-                        node.id,
-                        (COUNT(parent.id) - 1) AS innerDepth
-                    FROM
-                        {$this->tableName} AS node,
-                        {$this->tableName} AS parent
-                    WHERE
-                        node.tree_left BETWEEN parent.tree_left AND parent.tree_right
-                        AND (node.id = :nodeId)
-                    GROUP BY
-                        node.id
-                    ORDER BY
-                        node.tree_left
-                ) AS sub_tree
-            WHERE
-                node.tree_left BETWEEN parent.tree_left AND parent.tree_right
-                AND node.tree_left BETWEEN sub_parent.tree_left AND sub_parent.tree_right
-                AND sub_parent.id = sub_tree.id
-            GROUP BY
-                node.id
-            HAVING
-                depth = 1
-            ORDER BY
-                node.tree_left
-        ";
+        $connection = $this->getEntityManager()->getConnection();
+        $isPostgreSQL = $connection->getDatabasePlatform() instanceof PostgreSQLPlatform;
+        
+        if ($isPostgreSQL) {
+            // PostgreSQL - Liste explicite des colonnes dans GROUP BY
+            $sql = "
+                SELECT
+                    node.id,
+                    node.code,
+                    node.description,
+                    node.tree_left,
+                    node.tree_right,
+                    (COUNT(parent.id)-1 - (sub_tree.innerDepth)) AS depth
+                FROM
+                    {$this->tableName} as node,
+                    {$this->tableName} as parent,
+                    {$this->tableName} as sub_parent,
+                    (
+                        SELECT
+                            node.id,
+                            (COUNT(parent.id) - 1) AS innerDepth
+                        FROM
+                            {$this->tableName} AS node,
+                            {$this->tableName} AS parent
+                        WHERE
+                            node.tree_left BETWEEN parent.tree_left AND parent.tree_right
+                            AND (node.id = :nodeId)
+                        GROUP BY
+                            node.id, node.tree_left
+                        ORDER BY
+                            node.tree_left
+                    ) AS sub_tree
+                WHERE
+                    node.tree_left BETWEEN parent.tree_left AND parent.tree_right
+                    AND node.tree_left BETWEEN sub_parent.tree_left AND sub_parent.tree_right
+                    AND sub_parent.id = sub_tree.id
+                GROUP BY
+                    node.id, node.code, node.description, node.tree_left, node.tree_right, sub_tree.innerDepth
+                HAVING
+                    (COUNT(parent.id)-1 - (sub_tree.innerDepth)) = 1
+                ORDER BY
+                    node.tree_left
+            ";
+        } else {
+            // MySQL/MariaDB - Supporte node.*
+            $sql = "
+                SELECT
+                    node.*,
+                    (COUNT(parent.id)-1 - (sub_tree.innerDepth )) AS depth
+                FROM
+                    {$this->tableName} as node,
+                    {$this->tableName} as parent,
+                    {$this->tableName} as sub_parent,
+                    (
+                        SELECT
+                            node.id,
+                            (COUNT(parent.id) - 1) AS innerDepth
+                        FROM
+                            {$this->tableName} AS node,
+                            {$this->tableName} AS parent
+                        WHERE
+                            node.tree_left BETWEEN parent.tree_left AND parent.tree_right
+                            AND (node.id = :nodeId)
+                        GROUP BY
+                            node.id
+                        ORDER BY
+                            node.tree_left
+                    ) AS sub_tree
+                WHERE
+                    node.tree_left BETWEEN parent.tree_left AND parent.tree_right
+                    AND node.tree_left BETWEEN sub_parent.tree_left AND sub_parent.tree_right
+                    AND sub_parent.id = sub_tree.id
+                GROUP BY
+                    node.id
+                HAVING
+                    depth = 1
+                ORDER BY
+                    node.tree_left
+            ";
+        }
 
         $rsm = new ResultSetMapping();
         $rsm->addEntityResult($this->getClassName(), 'node');
+        $rsm->addFieldResult('node', 'id', 'id');
+        $rsm->addFieldResult('node', 'code', 'code');
+        $rsm->addFieldResult('node', 'description', 'description');
+        $rsm->addFieldResult('node', 'tree_left', 'left');
+        $rsm->addFieldResult('node', 'tree_right', 'right');
+        
         $query = $this->getEntityManager()
             ->createNativeQuery($sql, $rsm);
         $query->setParameter(':nodeId', $nodeId);
