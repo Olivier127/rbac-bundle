@@ -134,14 +134,21 @@ trait NodeEntityTrait
 
     public function reset(): void
     {
-        $tableName = $this->getClassMetadata()
-            ->getTableName();
-        $sql = "DELETE FROM {$tableName} WHERE id > 1;";
-        $sql .= "UPDATE {$tableName} SET tree_left = 0, tree_right = 1 WHERE id = 1;";
-        $sql .= "ALTER TABLE {$tableName} AUTO_INCREMENT = 2;";
-        $this->getEntityManager()
-            ->getConnection()
-            ->executeQuery($sql);
+        $connection = $this->getEntityManager()->getConnection();
+        $tableName = $this->getClassMetadata()->getTableName();
+        
+        if ($connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            // PostgreSQL
+            $connection->executeQuery("DELETE FROM {$tableName} WHERE id > 1");
+            $connection->executeQuery("UPDATE {$tableName} SET tree_left = 0, tree_right = 1 WHERE id = 1");
+            $connection->executeQuery("SELECT setval(pg_get_serial_sequence('{$tableName}', 'id'), 2, false)");
+        } else {
+            // MySQL/MariaDB
+            $sql = "DELETE FROM {$tableName} WHERE id > 1;";
+            $sql .= "UPDATE {$tableName} SET tree_left = 0, tree_right = 1 WHERE id = 1;";
+            $sql .= "ALTER TABLE {$tableName} AUTO_INCREMENT = 2;";
+            $connection->executeQuery($sql);
+        }
     }
 
     public function updateForAdd(int $parentId, string $nodeClass, string $code, string $description): Node

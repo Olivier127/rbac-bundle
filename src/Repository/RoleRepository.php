@@ -32,30 +32,27 @@ class RoleRepository extends ServiceEntityRepository implements NestedSetInterfa
             ->getTableName();
     }
 
-    public function initTable()
+    public function initTable(): void
     {
-        if ($this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSQLPlatform) {
-            $this->getEntityManager()->getConnection()->executeQuery("SET CONSTRAINTS ALL DEFERRED");
-            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE user_role CASCADE");
-            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE role_permission CASCADE");
-            $this->getEntityManager()->getConnection()->executeQuery("TRUNCATE {$this->tableName} CASCADE");
-            $this->getEntityManager()->getConnection()->executeQuery("SET CONSTRAINTS ALL IMMEDIATE");
+        $connection = $this->getEntityManager()->getConnection();
+        
+        if ($connection->getDatabasePlatform() instanceof PostgreSQLPlatform) {
+            // PostgreSQL
+            $connection->executeQuery("SET CONSTRAINTS ALL DEFERRED");
+            $connection->executeQuery("TRUNCATE user_role CASCADE");
+            $connection->executeQuery("TRUNCATE role_permission CASCADE");
+            $connection->executeQuery("TRUNCATE {$this->tableName} CASCADE");
+            $connection->executeQuery("SET CONSTRAINTS ALL IMMEDIATE");
+            $connection->executeQuery("INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1)");
+            $connection->executeQuery("INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1)");
+            $connection->executeQuery("SELECT setval(pg_get_serial_sequence('{$this->tableName}', 'id'), 1, true)");
         } else {
+            // MySQL/MariaDB
             $sql = "SET FOREIGN_KEY_CHECKS = 0; TRUNCATE user_role; TRUNCATE role_permission; TRUNCATE {$this->tableName};SET FOREIGN_KEY_CHECKS = 1;";
-            $this->getEntityManager()
-                ->getConnection()
-                ->executeQuery($sql);
+            $connection->executeQuery($sql);
+            $connection->executeQuery("INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1)");
+            $connection->executeQuery("INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1)");
         }
-
-        $sql = "INSERT INTO {$this->tableName} (id, code, description, tree_left, tree_right) VALUES (1, 'root', 'root', 0, 1);";
-        $this->getEntityManager()
-            ->getConnection()
-            ->executeQuery($sql);
-
-        $sql = "INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1)";
-        $this->getEntityManager()
-            ->getConnection()
-            ->executeQuery($sql);
     }
 
     /**
