@@ -14,12 +14,6 @@ use PhpRbacBundle\Core\Manager\NodeManagerInterface;
 use PhpRbacBundle\Exception\RbacRoleNotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
-/**
- * @method Role|null find($id, $lockMode = null, $lockVersion = null)
- * @method Role|null findOneBy(array $criteria, array $orderBy = null)
- * @method Role[]    findAll()
- * @method Role[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
 class RoleRepository extends ServiceEntityRepository implements NestedSetInterface
 {
     use NodeEntityTrait;

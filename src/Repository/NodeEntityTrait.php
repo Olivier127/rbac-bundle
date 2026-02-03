@@ -60,13 +60,13 @@ trait NodeEntityTrait
         $query->setParameter(":right", $info->getRight());
         $query->execute();
 
-        $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - :widht WHERE node.right > :right";
+        $dql = "UPDATE {$this->getClassName()} node SET node.right = node.right - :width WHERE node.right > :right";
         $query = $entityManager->createQuery($dql);
         $query->setParameter(":width", $width);
         $query->setParameter(":right", $info->getRight());
         $query->execute();
 
-        $dql = "UPDATE {$this->getClassName()} node SET node.left = node.left - :widht WHERE node.left > :right";
+        $dql = "UPDATE {$this->getClassName()} node SET node.left = node.left - :width WHERE node.left > :right";
         $query = $entityManager->createQuery($dql);
         $query->setParameter(":width", $width);
         $query->setParameter(":right", $info->getRight());
@@ -132,7 +132,7 @@ trait NodeEntityTrait
         return $row['id'];
     }
 
-    public function reset()
+    public function reset(): void
     {
         $tableName = $this->getClassMetadata()
             ->getTableName();

@@ -27,7 +27,7 @@ class RoleManager extends NodeManager implements RoleManagerInterface
         return $this->repository->deleteSubtree($role->getId());
     }
 
-    public function assignPermission(RoleInterface $role, string $permission)
+    public function assignPermission(RoleInterface $role, string $permission): void
     {
         $nodeId = $this->permissionManager->getPathId($permission);
         $node = $this->permissionManager->getNode($nodeId);
@@ -35,7 +35,7 @@ class RoleManager extends NodeManager implements RoleManagerInterface
         $this->repository->add($role, true);
     }
 
-    public function unassignPermission(RoleInterface $role, string $permission)
+    public function unassignPermission(RoleInterface $role, string $permission): void
     {
         $nodeId = $this->permissionManager->getPathId($permission);
         $node = $this->permissionManager->getNode($nodeId);

@@ -35,7 +35,7 @@ class AccessControlDriver implements EventSubscriberInterface
         $this->config = $config;
     }
 
-    private function checkAttributes(array $attributes, string $controller, string $method = "")
+    private function checkAttributes(array $attributes, string $controller, string $method = ""): void
     {
         if (empty($attributes)) {
             return;
@@ -59,7 +59,7 @@ class AccessControlDriver implements EventSubscriberInterface
     }
 
 
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(ControllerEvent $event): void
     {
         $controllers = $event->getController();
         if (!is_array($controllers)) {
@@ -69,11 +69,17 @@ class AccessControlDriver implements EventSubscriberInterface
         $method = $controllers[1];
 
         $reflectionClass = new ReflectionClass($controller);
-        $attributes = $reflectionClass->getAttributes(IsGranted::class) + $reflectionClass->getAttributes(HasRole::class);
+        $attributes = array_merge(
+            $reflectionClass->getAttributes(IsGranted::class),
+            $reflectionClass->getAttributes(HasRole::class)
+        );
         $this->checkAttributes($attributes, $reflectionClass->getName());
 
         $reflection = new ReflectionMethod($controller, $method);
-        $attributes = $reflection->getAttributes(IsGranted::class) + $reflection->getAttributes(HasRole::class);
+        $attributes = array_merge(
+            $reflection->getAttributes(IsGranted::class),
+            $reflection->getAttributes(HasRole::class)
+        );
         $this->checkAttributes($attributes, $reflectionClass->getName(), $method);
     }
 

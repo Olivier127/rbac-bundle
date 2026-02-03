@@ -9,7 +9,7 @@ use PhpRbacBundle\Repository\PermissionRepository;
 
 abstract class NodeManager implements NodeManagerInterface
 {
-    public function __construct(protected RoleRepository|PermissionRepository $repository)
+    public function __construct(protected readonly RoleRepository|PermissionRepository $repository)
     {
     }
 
@@ -127,8 +127,8 @@ abstract class NodeManager implements NodeManagerInterface
         return $nodes[count($nodes) - 2];
     }
 
-    public function reset()
+    public function reset(): void
     {
-        return $this->repository->reset();
+        $this->repository->reset();
     }
 }
