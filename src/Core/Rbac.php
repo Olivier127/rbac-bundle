@@ -12,13 +12,22 @@ class Rbac implements RbacInterface
 {
     public function __construct(
         private readonly PermissionManagerInterface $permissionManager,
-        private readonly RoleManagerInterface $roleManager
+        private readonly RoleManagerInterface $roleManager,
+        private readonly ?RbacCacheService $cacheService = null
     ) {
     }
 
     public function hasPermission(string|int|PermissionInterface $permission, mixed $userId): bool
     {
         Assert::notEmpty($userId);
+
+        // Check cache first
+        if ($this->cacheService?->isEnabled()) {
+            $cached = $this->cacheService->getPermission($permission, $userId);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
 
         $permissionId = $permission;
         if (is_object($permission)) {
@@ -27,12 +36,25 @@ class Rbac implements RbacInterface
             $permissionId = $this->permissionManager->getPathId($permission);
         }
 
-        return $this->permissionManager->hasPermission($permissionId, $userId);
+        $result = $this->permissionManager->hasPermission($permissionId, $userId);
+
+        // Cache the result
+        $this->cacheService?->setPermission($permission, $userId, $result);
+
+        return $result;
     }
 
     public function hasRole(string|int|RoleInterface $role, mixed $userId): bool
     {
         Assert::notEmpty($userId);
+
+        // Check cache first
+        if ($this->cacheService?->isEnabled()) {
+            $cached = $this->cacheService->getRole($role, $userId);
+            if ($cached !== null) {
+                return $cached;
+            }
+        }
 
         $roleId = $role;
         if (is_object($role)) {
@@ -41,6 +63,11 @@ class Rbac implements RbacInterface
             $roleId = $this->roleManager->getPathId($role);
         }
 
-        return $this->roleManager->hasRole($roleId, $userId);
+        $result = $this->roleManager->hasRole($roleId, $userId);
+
+        // Cache the result
+        $this->cacheService?->setRole($role, $userId, $result);
+
+        return $result;
     }
 }

@@ -16,6 +16,8 @@
     "require": {
         "php": "^8.3",
         "symfony/framework-bundle": "^7.3",
+        "symfony/cache": "^7.3",
+        "psr/cache": "^3.0",
         "webmozart/assert": "^1.11",
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/orm": "^3.3",

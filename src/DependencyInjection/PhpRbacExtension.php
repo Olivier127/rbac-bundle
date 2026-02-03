@@ -27,6 +27,11 @@ class PhpRbacExtension extends Extension
         $container->setParameter('php_rbac.resolve_target_entities.user', $config['resolve_target_entities']['user']);
         $container->setParameter('php_rbac.resolve_target_entities.role', $config['resolve_target_entities']['role']);
         $container->setParameter('php_rbac.resolve_target_entities.permission', $config['resolve_target_entities']['permission']);
+        
+        // Cache configuration
+        $container->setParameter('php_rbac.cache.enabled', $config['cache']['enabled']);
+        $container->setParameter('php_rbac.cache.ttl', $config['cache']['ttl']);
+        $container->setParameter('php_rbac.cache.prefix', $config['cache']['prefix']);
     }
 
     public function getAlias(): string

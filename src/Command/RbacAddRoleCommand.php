@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Command;
 
+use PhpRbacBundle\Core\RbacCacheService;
 use PhpRbacBundle\Core\Manager\RoleManager;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
@@ -21,6 +22,7 @@ class RbacAddRoleCommand extends Command
     public function __construct(
         private readonly RoleRepository $roleRepository,
         private readonly RoleManager $roleManager,
+        private readonly RbacCacheService $cacheService,
     ) {
         parent::__construct();
     }
@@ -65,6 +67,12 @@ class RbacAddRoleCommand extends Command
         $question = new ChoiceQuestion('Enter the parent of the role : ', array_keys($roles), 0);
         $parentPath = $helper->ask($input, $output, $question);
         $role = $this->roleManager->add($code, $description, $roles[$parentPath]->getId());
+
+        // Clear cache after adding role
+        $this->cacheService->clearRoles();
+
+        $io = new SymfonyStyle($input, $output);
+        $io->success('Role added successfully. Cache cleared.');
 
         return Command::SUCCESS;
     }

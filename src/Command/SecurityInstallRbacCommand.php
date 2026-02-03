@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Command;
 
+use PhpRbacBundle\Core\RbacCacheService;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -18,7 +19,8 @@ class SecurityInstallRbacCommand extends Command
 {
     public function __construct(
         private readonly PermissionRepository $permissionRepository,
-        private readonly RoleRepository $roleRepository
+        private readonly RoleRepository $roleRepository,
+        private readonly RbacCacheService $cacheService,
     ) {
         parent::__construct();
     }
@@ -38,7 +40,10 @@ class SecurityInstallRbacCommand extends Command
         $io->note('Role root installation');
         $this->roleRepository->initTable();
 
-        $io->success('Done');
+        // Clear all cache after installation
+        $this->cacheService->clearAll();
+
+        $io->success('RBAC installed successfully. Cache cleared.');
 
         return Command::SUCCESS;
     }

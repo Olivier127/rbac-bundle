@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Command;
 
+use PhpRbacBundle\Core\RbacCacheService;
 use PhpRbacBundle\Core\Manager\PermissionManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Question\Question;
@@ -21,6 +22,7 @@ class RbacAddPermissionCommand extends Command
     public function __construct(
         private readonly PermissionRepository $permissionRepository,
         private readonly PermissionManager $permissionManager,
+        private readonly RbacCacheService $cacheService,
     ) {
         parent::__construct();
     }
@@ -65,6 +67,12 @@ class RbacAddPermissionCommand extends Command
         $question = new ChoiceQuestion('Enter the parent of the permission : ', array_keys($permissions), 0);
         $parentPath = $helper->ask($input, $output, $question);
         $permission = $this->permissionManager->add($code, $description, $permissions[$parentPath]->getId());
+
+        // Clear cache after adding permission
+        $this->cacheService->clearPermissions();
+
+        $io = new SymfonyStyle($input, $output);
+        $io->success('Permission added successfully. Cache cleared.');
 
         return Command::SUCCESS;
     }

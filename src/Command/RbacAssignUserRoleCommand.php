@@ -3,6 +3,7 @@
 namespace PhpRbacBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use PhpRbacBundle\Core\RbacCacheService;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -22,6 +23,7 @@ class RbacAssignUserRoleCommand extends Command
         private readonly RoleRepository $roleRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly string $userEntity,
+        private readonly RbacCacheService $cacheService,
     ) {
         parent::__construct();
     }
@@ -73,6 +75,12 @@ class RbacAssignUserRoleCommand extends Command
             $user->addRbacRole($role);
         }
         $userRepository->add($user, true);
+
+        // Clear cache for this specific user
+        $this->cacheService->clearUser((int) $userId);
+
+        $io = new SymfonyStyle($input, $output);
+        $io->success("Role(s) assigned successfully to user {$userId}. User cache cleared.");
 
         return Command::SUCCESS;
     }

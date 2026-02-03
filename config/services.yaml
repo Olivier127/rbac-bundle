@@ -22,3 +22,11 @@ services:
         public: true
         arguments:
             $entityClass: '%php_rbac.resolve_target_entities.role%'
+
+    # RBAC Cache Service
+    PhpRbacBundle\Core\RbacCacheService:
+        arguments:
+            $cache: '@cache.app'
+            $enabled: '%php_rbac.cache.enabled%'
+            $ttl: '%php_rbac.cache.ttl%'
+            $prefix: '%php_rbac.cache.prefix%'

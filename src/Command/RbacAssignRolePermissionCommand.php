@@ -2,6 +2,7 @@
 
 namespace PhpRbacBundle\Command;
 
+use PhpRbacBundle\Core\RbacCacheService;
 use PhpRbacBundle\Core\Manager\RoleManager;
 use PhpRbacBundle\Repository\RoleRepository;
 use Symfony\Component\Console\Command\Command;
@@ -22,6 +23,7 @@ class RbacAssignRolePermissionCommand extends Command
         private readonly PermissionRepository $permissionRepository,
         private readonly RoleRepository $roleRepository,
         private readonly RoleManager $roleManager,
+        private readonly RbacCacheService $cacheService,
     ) {
         parent::__construct();
     }
@@ -82,6 +84,12 @@ class RbacAssignRolePermissionCommand extends Command
         foreach ($permissionPaths as $permissionPath) {
             $this->roleManager->assignPermission($roles[$rolePath], $permissionPath);
         }
+
+        // Clear all cache after assigning permissions to role
+        $this->cacheService->clearAll();
+
+        $io = new SymfonyStyle($input, $output);
+        $io->success('Permission(s) assigned successfully. Cache cleared.');
 
         return Command::SUCCESS;
     }

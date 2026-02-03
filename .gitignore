@@ -8,3 +8,4 @@ composer.lock
 /behat.yml
 /phpspec.yml
 /.phpunit.result.cache
+plans/*
