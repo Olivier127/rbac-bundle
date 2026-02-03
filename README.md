@@ -408,7 +408,6 @@ For complete cache documentation, see [docs/CACHE.md](docs/CACHE.md).
 ## Documentation
 
 - **[Cache System](docs/CACHE.md)** - Complete cache documentation
-- **[Architecture Report](plans/ARCHITECTURE_REPORT.md)** - Technical architecture analysis
 
 ## Requirements
 
